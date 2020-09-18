@@ -5,4 +5,4 @@ ENV GO111MODULE=on
 ENV GOPATH=''
 COPY ./server/ ./
 
-CMD go run .
+CMD go mod download && go run .
