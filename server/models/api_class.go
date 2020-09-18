@@ -1,6 +1,6 @@
-package api_models
+package models
 
-type Class struct {
+type APIClass struct {
 	Name      string `json:"name"`
 	StartDate string `json:"start_date"`
 	EndDate   string `json:"end_date"`

@@ -1,4 +1,4 @@
-package db_models
+package models
 
 type Class struct {
 	Id       string `json:"id"`
