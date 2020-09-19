@@ -108,3 +108,7 @@ func Update(db *sql.DB, v interfaces.Model) error {
 	}
 	return nil
 }
+
+func DeleteById(db *sql.DB, v interfaces.Model) {
+	db.QueryRow(`DELETE FROM `+v.GetTableName()+` WHERE id = ?`, v.GetId())
+}

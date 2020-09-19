@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -63,7 +64,17 @@ func TestClassInsert(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestClassFindByIdAndUpdate(t *testing.T) {
+func TestClassFindById(t *testing.T) {
+	db := PrepareTestDB()
+	m := Class{}
+	err := m.FindById(db, TestPilatesClass.Id)
+	assert.Nil(t, err)
+	assert.Equal(t, TestPilatesClass.Id, m.Id)
+	assert.Equal(t, TestPilatesClass.Name, m.Name)
+	assert.Equal(t, TestPilatesClass.Capacity, m.Capacity)
+}
+
+func TestClassUpdate(t *testing.T) {
 	db := PrepareTestDB()
 	m := Class{}
 	err := m.FindById(db, TestPilatesClass.Id)
@@ -77,4 +88,19 @@ func TestClassFindByIdAndUpdate(t *testing.T) {
 	err = database.Update(db, m)
 	assert.Nil(t, err)
 	assert.Equal(t, updatedName, m.Name)
+}
+
+func TestClassDeleteById(t *testing.T) {
+	db := PrepareTestDB()
+	m := Class{}
+	err := m.FindById(db, TestPilatesClass.Id)
+	assert.Nil(t, err)
+	assert.Equal(t, TestPilatesClass.Id, m.Id)
+	assert.Equal(t, TestPilatesClass.Name, m.Name)
+	assert.Equal(t, TestPilatesClass.Capacity, m.Capacity)
+
+	database.DeleteById(db, m)
+
+	err = m.FindById(db, TestPilatesClass.Id)
+	assert.Equal(t, sql.ErrNoRows, err)
 }
