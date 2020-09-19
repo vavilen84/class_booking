@@ -1,0 +1,2 @@
+- Run tests inside docker container
+- Add flags to switch sql server (docker/host machine)
