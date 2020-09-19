@@ -2,29 +2,51 @@ package models
 
 import (
 	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 	"github.com/vavilen84/class_booking/constants"
-	"github.com/vavilen84/class_booking/migrate"
+	"github.com/vavilen84/class_booking/helpers"
 	"log"
 	"os"
+	"time"
 )
 
-func initTestDB() (db *sql.DB) {
-	db, err := sql.Open(os.Getenv("SQL_DRIVER"), os.Getenv("TEST_SQL_DSN"))
+func initTestDb() (db *sql.DB) {
+
+	sqlDriver := os.Getenv("SQL_DRIVER")
+	testSqlDsn := os.Getenv("TEST_SQL_DSN")
+	if (sqlDriver == "") || (testSqlDsn == "") {
+		//if we run test outside docker using host machine sql server - we need to load .env vars
+		err := godotenv.Load("../../.env")
+		if err != nil {
+			helpers.LogError(err)
+		}
+		sqlDriver = os.Getenv("SQL_DRIVER")
+		// use credentials without db in order to create test db
+		testSqlDsn = os.Getenv("LOCALHOST_SQL_DSN")
+		db, err = sql.Open(sqlDriver, testSqlDsn)
+		if err != nil {
+			panic("failed to connect sql server: " + err.Error())
+		}
+		err = createTestDbIfNotExists(db, os.Getenv("MYSQL_TEST_DATABASE"))
+		if err != nil {
+			panic("failed to create test db: " + err.Error())
+		}
+		testSqlDsn = os.Getenv("LOCALHOST_TEST_DB_SQL_DSN")
+	}
+
+	db, err := sql.Open(sqlDriver, testSqlDsn)
 	if err != nil {
 		panic("failed to connect database: " + err.Error())
 	}
+	db.SetConnMaxLifetime(time.Minute * 3)
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(10)
 	return db
 }
 
-func createTestDbIfNotExists(db *sql.DB) (err error) {
-	query := `
-		CREATE DATABASE IF NOT EXISTS class_booking_test` + constants.MigrationsTableName + `
-		(
-			version integer PRIMARY KEY,
-			filename text NOT NULL,
-			created_at integer NOT NULL
-		)
-	`
+func createTestDbIfNotExists(db *sql.DB, dbName string) (err error) {
+	query := `CREATE DATABASE IF NOT EXISTS ` + dbName
 	_, err = db.Exec(query)
 	if err != nil {
 		log.Print(err.Error())
@@ -36,12 +58,12 @@ func createTestDbIfNotExists(db *sql.DB) (err error) {
 func clearDb(db *sql.DB) {
 	dropAllTables(db)
 
-	err := migrate.CreateMigrationsTableIfNotExists(db)
+	err := CreateMigrationsTableIfNotExists(db)
 	if err != nil {
 		log.Println(err)
 	}
 
-	err = migrate.MigrateUp(db)
+	err = MigrateUp(db)
 	if err != nil {
 		log.Println(err)
 	}
