@@ -13,9 +13,9 @@ import (
 func TestClassValidateRequiredTag(t *testing.T) {
 	err := Validate(Class{})
 	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), fmt.Sprintf(constants.RequiredErrorMsg, "Class", "Id"))
-	assert.Contains(t, err.Error(), fmt.Sprintf(constants.RequiredErrorMsg, "Class", "Name"))
-	assert.Contains(t, err.Error(), fmt.Sprintf(constants.RequiredErrorMsg, "Class", "Capacity"))
+	assert.Contains(t, err.Error(), fmt.Sprintf(constants.RequiredErrorMsg, constants.ClassStructName, "Id"))
+	assert.Contains(t, err.Error(), fmt.Sprintf(constants.RequiredErrorMsg, constants.ClassStructName, "Name"))
+	assert.Contains(t, err.Error(), fmt.Sprintf(constants.RequiredErrorMsg, constants.ClassStructName, "Capacity"))
 }
 
 func TestClassValidateMinValueTag(t *testing.T) {
@@ -26,8 +26,8 @@ func TestClassValidateMinValueTag(t *testing.T) {
 	}
 	err := Validate(c)
 	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), fmt.Sprintf(constants.MinValueErrorMsg, "Class", "Name", "2"))
-	assert.Contains(t, err.Error(), fmt.Sprintf(constants.MinValueErrorMsg, "Class", "Capacity", "1"))
+	assert.Contains(t, err.Error(), fmt.Sprintf(constants.MinValueErrorMsg, constants.ClassStructName, "Name", "2"))
+	assert.Contains(t, err.Error(), fmt.Sprintf(constants.MinValueErrorMsg, constants.ClassStructName, "Capacity", "1"))
 }
 
 func TestClassValidateUuid4Tag(t *testing.T) {
@@ -36,7 +36,7 @@ func TestClassValidateUuid4Tag(t *testing.T) {
 	}
 	err := Validate(c)
 	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), fmt.Sprintf(constants.Uuid4ErrorMsg, "Class"))
+	assert.Contains(t, err.Error(), fmt.Sprintf(constants.Uuid4ErrorMsg, constants.ClassStructName))
 }
 
 func TestClassValidateMaxValueTag(t *testing.T) {
@@ -47,21 +47,29 @@ func TestClassValidateMaxValueTag(t *testing.T) {
 	}
 	err := Validate(c)
 	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), fmt.Sprintf(constants.MaxValueErrorMsg, "Class", "Name", "255"))
-	assert.Contains(t, err.Error(), fmt.Sprintf(constants.MaxValueErrorMsg, "Class", "Capacity", "50"))
+	assert.Contains(t, err.Error(), fmt.Sprintf(constants.MaxValueErrorMsg, constants.ClassStructName, "Name", "255"))
+	assert.Contains(t, err.Error(), fmt.Sprintf(constants.MaxValueErrorMsg, constants.ClassStructName, "Capacity", "50"))
 }
 
 func TestClassInsert(t *testing.T) {
 	db := PrepareTestDB()
 	capacity := 10
 	id := uuid.New().String()
+	name := "Crossfit"
 	c := Class{
 		Id:       id,
-		Name:     "Crossfit",
+		Name:     name,
 		Capacity: &capacity,
 	}
 	err := Insert(db, c)
 	assert.Nil(t, err)
+
+	c = Class{}
+	err = c.FindById(db, id)
+	assert.Nil(t, err)
+	assert.Equal(t, c.Id, id)
+	assert.Equal(t, c.Name, name)
+	assert.Equal(t, c.Capacity, &capacity)
 }
 
 func TestClassFindById(t *testing.T) {

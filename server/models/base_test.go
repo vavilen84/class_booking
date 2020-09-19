@@ -17,6 +17,10 @@ var (
 		Name:     "Pilates",
 		Capacity: &testPilatesCapacity,
 	}
+	TestVisitor = Visitor{
+		Id:    "2b99f7e3-1e6a-47d5-839d-9fbff613bfbc",
+		Email: "visitor@example.com",
+	}
 
 	seededRand *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
 )
@@ -42,6 +46,12 @@ func PrepareTestDB() (db *sql.DB) {
 func loadFixtures(db *sql.DB) {
 	c := TestPilatesClass
 	err := Insert(db, c)
+	if err != nil {
+		helpers.LogError(err)
+	}
+
+	v := TestVisitor
+	err = Insert(db, v)
 	if err != nil {
 		helpers.LogError(err)
 	}
