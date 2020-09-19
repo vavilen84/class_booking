@@ -130,9 +130,9 @@ func performMigrateTx(db *sql.DB, m models.Migration) error {
 
 func apply(db *sql.DB, k int, list map[int64]models.Migration) error {
 	m := list[int64(k)]
-	row := db.QueryRow(`SELECT id FROM public.`+constants.MigrationsTableName+` WHERE version = $1`, m.Version)
-	var id int64
-	err := row.Scan(&id)
+	row := db.QueryRow(`SELECT version FROM `+constants.MigrationsTableName+` WHERE version = $1`, m.Version)
+	var version int64
+	err := row.Scan(&version)
 	if err == sql.ErrNoRows {
 		err = performMigrateTx(db, m)
 		if err != nil {
@@ -147,11 +147,10 @@ func apply(db *sql.DB, k int, list map[int64]models.Migration) error {
 
 func createMigrationsTableIfNotExists(db *sql.DB) error {
 	query := `
-		CREATE TABLE IF NOT EXISTS public.` + constants.MigrationsTableName + `
+		CREATE TABLE IF NOT EXISTS ` + constants.MigrationsTableName + `
 		(
-			id serial PRIMARY KEY,
+			version integer PRIMARY KEY,
 			filename text NOT NULL,
-			version integer NOT NULL,
 			created_at integer NOT NULL
 		)
 	`
