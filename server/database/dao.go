@@ -57,3 +57,54 @@ func Insert(db *sql.DB, v interfaces.Model) error {
 	}
 	return nil
 }
+
+func Update(db *sql.DB, v interfaces.Model) error {
+
+	reflectTypeOf := reflect.TypeOf(v)
+	reflectValueOf := reflect.ValueOf(v)
+	fieldsCount := reflectTypeOf.NumField()
+
+	values := make([]interface{}, 0)
+	columns := make([]string, 0)
+	paramCounter := 1
+
+	// collect params, columns, values
+	for i := 0; i < fieldsCount; i++ {
+		field := reflectTypeOf.Field(i)
+		skipOnUpdate := field.Tag.Get("skip_on_update")
+		if skipOnUpdate == "true" {
+			continue
+		}
+		columns = append(columns, field.Tag.Get("column"))
+		values = append(values, reflectValueOf.FieldByName(field.Name).Interface())
+		paramCounter++
+	}
+
+	// quote strings in values
+	for i := 0; i < len(values); i++ {
+		t := reflect.TypeOf(&values[i])
+		v := reflect.ValueOf(&values[i])
+		switch t.Kind() {
+		case reflect.String:
+			v.SetString("'" + v.String() + "'")
+		}
+	}
+
+	var setData []string
+	for _, v := range columns {
+		setData = append(setData, v+" = ?")
+	}
+
+	query := fmt.Sprintf(
+		"UPDATE %s SET %s WHERE id = ?",
+		v.GetTableName(),
+		strings.Join(setData, ","),
+	)
+	values = append(values, v.GetId())
+	_, err := db.Exec(query, values...)
+	if err != nil {
+		helpers.LogError(err)
+		return err
+	}
+	return nil
+}

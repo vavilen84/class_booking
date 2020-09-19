@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/class_booking/constants"
+	"github.com/vavilen84/class_booking/database"
 	"testing"
 )
 
@@ -60,4 +61,20 @@ func TestClassInsert(t *testing.T) {
 	}
 	err := Insert(db, c)
 	assert.Nil(t, err)
+}
+
+func TestClassFindByIdAndUpdate(t *testing.T) {
+	db := PrepareTestDB()
+	m := Class{}
+	err := m.FindById(db, TestPilatesClass.Id)
+	assert.Nil(t, err)
+	assert.Equal(t, TestPilatesClass.Id, m.Id)
+	assert.Equal(t, TestPilatesClass.Name, m.Name)
+	assert.Equal(t, TestPilatesClass.Capacity, m.Capacity)
+
+	updatedName := "Updated Name"
+	m.Name = updatedName
+	err = database.Update(db, m)
+	assert.Nil(t, err)
+	assert.Equal(t, updatedName, m.Name)
 }

@@ -26,6 +26,11 @@ func (Migration) GetTableName() string {
 	return constants.MigrationsTableName
 }
 
+func (m Migration) GetId() string {
+	// TODO ID not needed for Migration
+	return ""
+}
+
 func getMigration(info os.FileInfo) (err error, m Migration) {
 	filename := info.Name()
 	splitted := strings.Split(info.Name(), "_")
