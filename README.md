@@ -41,6 +41,7 @@ shell/migrate_create.sh migration_name
 
 Apply all migrations
 ```
+shell/server_build.sh
 shell/migrate_apply_all.sh
 ```
 
