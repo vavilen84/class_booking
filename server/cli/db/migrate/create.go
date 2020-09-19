@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/vavilen84/class_booking/constants"
+	"github.com/vavilen84/class_booking/helpers"
 	"os"
 	"path/filepath"
 	"time"
@@ -17,5 +18,8 @@ func main() {
 	nowUnix := now.Unix()
 
 	file := filepath.Join(constants.MigrationsFolder, fmt.Sprintf("%d_%s.up.sql", nowUnix, *namePtr))
-	os.Create(file)
+	_, err := os.Create(file)
+	if err != nil {
+		helpers.LogError(err)
+	}
 }

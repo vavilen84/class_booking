@@ -7,8 +7,7 @@ import (
 )
 
 func TestInsertClass(t *testing.T) {
-	db := initTestDb()
-	clearDb(db)
+	db := PrepareTestDB()
 	m := Class{}
 	err := m.Insert(db)
 	assert.NotNil(t, err)
