@@ -7,7 +7,6 @@ import (
 	"github.com/vavilen84/class_booking/interfaces"
 	"gopkg.in/go-playground/validator.v9"
 	"reflect"
-	"strconv"
 	"strings"
 )
 
@@ -37,7 +36,7 @@ func Insert(db *sql.DB, v interfaces.Model) error {
 			continue
 		}
 		columns = append(columns, field.Tag.Get("column"))
-		placeholders = append(placeholders, "$"+strconv.Itoa(paramCounter))
+		placeholders = append(placeholders, "?")
 		values = append(values, reflectValueOf.FieldByName(field.Name).Interface())
 		paramCounter++
 	}
@@ -53,7 +52,7 @@ func Insert(db *sql.DB, v interfaces.Model) error {
 	}
 
 	query := fmt.Sprintf(
-		"INSERT INTO public.%s (%s) VALUES (%s)",
+		"INSERT INTO %s (%s) VALUES (%s)",
 		v.GetTableName(),
 		strings.Join(columns, ","),
 		strings.Join(placeholders, ","),

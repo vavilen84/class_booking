@@ -130,7 +130,7 @@ func performMigrateTx(db *sql.DB, m models.Migration) error {
 
 func apply(db *sql.DB, k int, list map[int64]models.Migration) error {
 	m := list[int64(k)]
-	row := db.QueryRow(`SELECT version FROM `+constants.MigrationsTableName+` WHERE version = $1`, m.Version)
+	row := db.QueryRow(`SELECT version FROM `+constants.MigrationsTableName+` WHERE version = ?`, m.Version)
 	var version int64
 	err := row.Scan(&version)
 	if err == sql.ErrNoRows {
