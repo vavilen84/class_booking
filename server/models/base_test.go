@@ -5,6 +5,8 @@ import (
 	"github.com/vavilen84/class_booking/helpers"
 	"github.com/vavilen84/class_booking/test"
 	"log"
+	"math/rand"
+	"time"
 )
 
 var (
@@ -15,6 +17,8 @@ var (
 		Name:     "Pilates",
 		Capacity: &testPilatesCapacity,
 	}
+
+	seededRand *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
 )
 
 func PrepareTestDB() (db *sql.DB) {
@@ -41,4 +45,13 @@ func loadFixtures(db *sql.DB) {
 	if err != nil {
 		helpers.LogError(err)
 	}
+}
+
+func generateRandomString(length int) string {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[seededRand.Intn(len(charset))]
+	}
+	return string(b)
 }
