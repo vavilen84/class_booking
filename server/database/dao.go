@@ -1,23 +1,15 @@
-package orm
+package database
 
 import (
 	"database/sql"
 	"fmt"
 	"github.com/vavilen84/class_booking/helpers"
 	"github.com/vavilen84/class_booking/interfaces"
-	"gopkg.in/go-playground/validator.v9"
 	"reflect"
 	"strings"
 )
 
 func Insert(db *sql.DB, v interfaces.Model) error {
-
-	// TODO add validate by scenario
-	err := ValidateStruct(v)
-	if err != nil {
-		helpers.LogError(err)
-		return err
-	}
 
 	reflectTypeOf := reflect.TypeOf(v)
 	reflectValueOf := reflect.ValueOf(v)
@@ -58,17 +50,7 @@ func Insert(db *sql.DB, v interfaces.Model) error {
 		strings.Join(placeholders, ","),
 	)
 
-	_, err = db.Exec(query, values...)
-	if err != nil {
-		helpers.LogError(err)
-		return err
-	}
-	return nil
-}
-
-func ValidateStruct(s interface{}) error {
-	v := validator.New()
-	err := v.Struct(s)
+	_, err := db.Exec(query, values...)
 	if err != nil {
 		helpers.LogError(err)
 		return err
