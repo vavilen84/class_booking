@@ -1,5 +1,7 @@
 # Class booking project
 
+[Server application design](docs/server-design.md)
+
 ## Run project
 
 ### Install Docker
