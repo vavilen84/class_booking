@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/google/uuid"
 	"github.com/vavilen84/class_booking/constants"
+	"github.com/vavilen84/class_booking/database"
 	"github.com/vavilen84/class_booking/helpers"
 )
 
@@ -24,6 +25,6 @@ func (c *Class) Insert(db *sql.DB) (err error) {
 		return
 	}
 	c.Id = uuid.New().String()
-	err = Insert(db, c)
+	err = database.Insert(db, c)
 	return
 }

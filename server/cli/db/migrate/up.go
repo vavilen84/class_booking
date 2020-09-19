@@ -3,7 +3,7 @@ package main
 import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/vavilen84/class_booking/migrate"
+	"github.com/vavilen84/class_booking/models"
 	"log"
 	"os"
 	"time"
@@ -18,12 +18,12 @@ func main() {
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(10)
 
-	err = migrate.CreateMigrationsTableIfNotExists(db)
+	err = models.CreateMigrationsTableIfNotExists(db)
 	if err != nil {
 		log.Println(err)
 	}
 
-	err = migrate.MigrateUp(db)
+	err = models.MigrateUp(db)
 	if err != nil {
 		log.Println(err)
 	}
