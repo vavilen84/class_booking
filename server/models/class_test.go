@@ -6,7 +6,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/class_booking/constants"
-	"github.com/vavilen84/class_booking/database"
 	"testing"
 )
 
@@ -61,7 +60,7 @@ func TestClassInsert(t *testing.T) {
 		Name:     name,
 		Capacity: &capacity,
 	}
-	err := Insert(db, c)
+	err := c.Insert(db)
 	assert.Nil(t, err)
 
 	c = Class{}
@@ -93,12 +92,18 @@ func TestClassUpdate(t *testing.T) {
 
 	updatedName := "Updated Name"
 	m.Name = updatedName
-	err = database.Update(db, m)
+	err = m.Update(db)
 	assert.Nil(t, err)
 	assert.Equal(t, updatedName, m.Name)
+
+	err = m.FindById(db, TestPilatesClass.Id)
+	assert.Nil(t, err)
+	assert.Equal(t, TestPilatesClass.Id, m.Id)
+	assert.Equal(t, updatedName, m.Name)
+	assert.Equal(t, TestPilatesClass.Capacity, m.Capacity)
 }
 
-func TestClassDeleteById(t *testing.T) {
+func TestClassDelete(t *testing.T) {
 	db := PrepareTestDB()
 	m := Class{}
 	err := m.FindById(db, TestPilatesClass.Id)
@@ -107,7 +112,7 @@ func TestClassDeleteById(t *testing.T) {
 	assert.Equal(t, TestPilatesClass.Name, m.Name)
 	assert.Equal(t, TestPilatesClass.Capacity, m.Capacity)
 
-	database.DeleteById(db, m)
+	m.Delete(db)
 
 	err = m.FindById(db, TestPilatesClass.Id)
 	assert.Equal(t, sql.ErrNoRows, err)

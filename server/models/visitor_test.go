@@ -6,7 +6,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/class_booking/constants"
-	"github.com/vavilen84/class_booking/database"
 	"testing"
 )
 
@@ -43,7 +42,7 @@ func TestVisitorInsert(t *testing.T) {
 		Id:    id,
 		Email: email,
 	}
-	err := Insert(db, v)
+	err := v.Insert(db)
 	assert.Nil(t, err)
 
 	v = Visitor{}
@@ -51,6 +50,35 @@ func TestVisitorInsert(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, v.Id, id)
 	assert.Equal(t, v.Email, email)
+}
+
+func TestVisitorInsertWithAlreadyRegisteredEmail(t *testing.T) {
+	db := PrepareTestDB()
+	id := uuid.New().String()
+	v := Visitor{
+		Id:    id,
+		Email: TestVisitor.Email,
+	}
+	err := v.Insert(db)
+	assert.NotNil(t, err)
+	assert.Equal(t, fmt.Sprintf(constants.VisitorEmailExistsErrorMsg, constants.VisitorStructName), err.Error())
+}
+
+func TestVisitorUpdateWithAlreadyRegisteredEmail(t *testing.T) {
+	db := PrepareTestDB()
+	id := uuid.New().String()
+	email := "new_visitor@example.com"
+	v := Visitor{
+		Id:    id,
+		Email: email,
+	}
+	err := v.Insert(db)
+	assert.Nil(t, err)
+
+	v.Email = TestVisitor.Email
+	err = v.Update(db)
+	assert.NotNil(t, err)
+	assert.Equal(t, fmt.Sprintf(constants.VisitorEmailExistsErrorMsg, constants.VisitorStructName), err.Error())
 }
 
 func TestVisitorFindById(t *testing.T) {
@@ -72,12 +100,18 @@ func TestVisitorUpdate(t *testing.T) {
 
 	updatedEmail := "updated_email@example.com"
 	v.Email = updatedEmail
-	err = database.Update(db, v)
+	err = v.Update(db)
 	assert.Nil(t, err)
+	assert.Equal(t, updatedEmail, v.Email)
+
+	v = Visitor{}
+	err = v.FindById(db, TestVisitor.Id)
+	assert.Nil(t, err)
+	assert.Equal(t, TestVisitor.Id, v.Id)
 	assert.Equal(t, updatedEmail, v.Email)
 }
 
-func TestVisitorDeleteById(t *testing.T) {
+func TestVisitorDelete(t *testing.T) {
 	db := PrepareTestDB()
 	v := Visitor{}
 	err := v.FindById(db, TestVisitor.Id)
@@ -85,7 +119,7 @@ func TestVisitorDeleteById(t *testing.T) {
 	assert.Equal(t, TestVisitor.Id, v.Id)
 	assert.Equal(t, TestVisitor.Email, v.Email)
 
-	database.DeleteById(db, v)
+	v.Delete(db)
 
 	err = v.FindById(db, TestVisitor.Id)
 	assert.Equal(t, sql.ErrNoRows, err)

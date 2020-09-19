@@ -31,4 +31,6 @@ const (
 	MaxValueErrorMsg = "%s resource: '%s' max value is %s"
 	Uuid4ErrorMsg    = "%s resource: id is not valid uuid4"
 	EmailErrorMsg    = "%s resource: email is not valid"
+
+	VisitorEmailExistsErrorMsg = "%s resource: email is already register"
 )

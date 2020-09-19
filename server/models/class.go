@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"github.com/vavilen84/class_booking/constants"
+	"github.com/vavilen84/class_booking/database"
 )
 
 type Class struct {
@@ -17,6 +18,28 @@ func (Class) GetTableName() string {
 
 func (m Class) GetId() string {
 	return m.Id
+}
+
+func (m Class) Insert(db *sql.DB) (err error) {
+	err = Validate(m)
+	if err != nil {
+		return
+	}
+	err = database.Insert(db, m)
+	return
+}
+
+func (m Class) Update(db *sql.DB) (err error) {
+	err = Validate(m)
+	if err != nil {
+		return
+	}
+	err = database.Update(db, m)
+	return
+}
+
+func (m Class) Delete(db *sql.DB) {
+	database.DeleteById(db, m)
 }
 
 func (m *Class) FindById(db *sql.DB, id string) (err error) {

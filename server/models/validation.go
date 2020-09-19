@@ -48,11 +48,11 @@ func getType(s interface{}) string {
 	}
 }
 
-func ValidateStruct(s interface{}) (result StructErrors) {
+func ValidateStruct(s interface{}) error {
 	v := validator.New()
 	err := v.Struct(s)
 	if err != nil {
-		result = make(StructErrors, 0)
+		result := make(StructErrors, 0)
 		var structError StructError
 		for _, e := range err.(validator.ValidationErrors) {
 			structError = StructError{
@@ -72,8 +72,5 @@ func ValidateStruct(s interface{}) (result StructErrors) {
 
 func Validate(s interface{}) (err error) {
 	err = ValidateStruct(s)
-	if err != nil {
-		return
-	}
 	return
 }
