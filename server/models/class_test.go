@@ -3,13 +3,14 @@ package models
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"github.com/vavilen84/class_booking/constants"
 	"testing"
 )
 
-func TestInsertClass(t *testing.T) {
-	db := PrepareTestDB()
-	m := Class{}
-	err := m.Insert(db)
+func TestClassValidateRequiredTag(t *testing.T) {
+	err := Validate(Class{})
 	assert.NotNil(t, err)
-	fmt.Printf("%+v", err)
+	assert.Contains(t, err.Error(), fmt.Sprintf(constants.RequiredErrorMsg, "Class", "Id"))
+	assert.Contains(t, err.Error(), fmt.Sprintf(constants.RequiredErrorMsg, "Class", "Name"))
+	assert.Contains(t, err.Error(), fmt.Sprintf(constants.RequiredErrorMsg, "Class", "Capacity"))
 }

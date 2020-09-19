@@ -37,7 +37,7 @@ func PrepareTestDB() (db *sql.DB) {
 
 func loadFixtures(db *sql.DB) {
 	c := TestPilatesClass
-	err := c.Insert(db)
+	err := Insert(db, c)
 	if err != nil {
 		helpers.LogError(err)
 	}
