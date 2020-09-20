@@ -18,8 +18,8 @@ func InitDB() {
 	db = initDb()
 }
 
-func GetNewDBConn() (conn *sql.Conn) {
-	ctx := GetDefaultDBContext()
+func GetNewDBConn() (conn *sql.Conn, ctx context.Context) {
+	ctx = GetDefaultDBContext()
 	conn, err := db.Conn(ctx)
 	if err != nil {
 		helpers.LogError(err)

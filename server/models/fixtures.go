@@ -20,7 +20,7 @@ var (
 	}
 	TestYogaClass = Class{
 		Id:       "2b99f7e3-1e6a-47d5-839d-9fbff613bfba",
-		Name:     "Pilates",
+		Name:     "Yoga",
 		Capacity: &testPilatesCapacity,
 	}
 	TestVisitor = Visitor{

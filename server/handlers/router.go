@@ -11,10 +11,7 @@ import (
 func MakeHandler() http.Handler {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/api/class/{classId}", GetClass).Methods(http.MethodGet)
-	//r.HandleFunc("/api/class", s.GetClassList).Methods(http.MethodGet)
-	//r.HandleFunc("/api/class", s.CreateClass).Methods(http.MethodPost)
-	//r.HandleFunc("/api/class/{classId}", s.UpdateClass).Methods(http.MethodPut)
+	r.HandleFunc("/classes", Classes).Methods(http.MethodPost)
 
 	return r
 }

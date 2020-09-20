@@ -7,6 +7,7 @@ const (
 	// struct names
 
 	ClassStructName                = "Class"
+	APIClassesStructName           = "Classes"
 	VisitorStructName              = "Visitor"
 	TimetableItemStructName        = "TimetableItem"
 	VisitorTimetableItemStructName = "VisitorTimetableItem"
@@ -39,12 +40,15 @@ const (
 	Uuid4ErrorMsg    = "%s resource: '%s' is not valid uuid4"
 	EmailErrorMsg    = "%s resource: email is not valid"
 
-	VisitorEmailExistsErrorMsg        = "%s resource: email is already registered"
-	TimetableItemDateExistsErrorMsg   = "%s resource: date is already registered"
-	BookingAlreadyExistsErrorMsg      = "%s resource: booking already exists"
-	ClassDoesNotExistErrorMsg         = "%s resource: class does not exists"
-	VisitorDoesNotExistErrorMsg       = "%s resource: visitor does not exists"
-	TimetableItemDoesNotExistErrorMsg = "%s resource: visitor does not exists"
+	VisitorEmailExistsErrorMsg           = "%s resource: email is already registered"
+	TimetableItemDateExistsErrorMsg      = "%s resource: date is already registered"
+	BookingAlreadyExistsErrorMsg         = "%s resource: booking already exists"
+	ClassDoesNotExistErrorMsg            = "%s resource: class does not exists"
+	VisitorDoesNotExistErrorMsg          = "%s resource: visitor does not exists"
+	TimetableItemDoesNotExistErrorMsg    = "%s resource: visitor does not exists"
+	StartDateAfterEndDateErrorMsg        = "start_date can not be after end_date"
+	StartDateBeforeNowErrorMsg           = "start_date can not be before now"
+	TimetableItemDateExistsBatchErrorMsg = "date %s is already registered"
 
 	// date
 

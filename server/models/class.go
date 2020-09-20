@@ -3,8 +3,14 @@ package models
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"fmt"
+	"github.com/google/uuid"
 	"github.com/vavilen84/class_booking/constants"
+	"github.com/vavilen84/class_booking/containers"
 	"github.com/vavilen84/class_booking/database"
+	"github.com/vavilen84/class_booking/helpers"
+	"time"
 )
 
 type Class struct {
@@ -47,4 +53,77 @@ func (m *Class) FindById(ctx context.Context, conn *sql.Conn, id string) (err er
 	row := conn.QueryRowContext(ctx, `SELECT * FROM `+m.GetTableName()+` WHERE id = ?`, id)
 	err = row.Scan(&m.Id, &m.Name, &m.Capacity)
 	return err
+}
+
+func (m *Class) FindByName(ctx context.Context, conn *sql.Conn, name string) (err error) {
+	row := conn.QueryRowContext(ctx, `SELECT * FROM `+m.GetTableName()+` WHERE name LIKE ?`, name)
+	err = row.Scan(&m.Id, &m.Name, &m.Capacity)
+	return err
+}
+
+func (m Class) ValidateAPIClasses(ctx context.Context, conn *sql.Conn, apiClasses containers.APIClasses) (err error) {
+	err = Validate(apiClasses)
+	if err != nil {
+		return
+	}
+	if apiClasses.StartDate.After(*apiClasses.EndDate) {
+		return errors.New(constants.StartDateAfterEndDateErrorMsg)
+	}
+	if apiClasses.StartDate.Before(time.Now()) {
+		return errors.New(constants.StartDateBeforeNowErrorMsg)
+	}
+	t := TimetableItem{}
+	date := apiClasses.StartDate
+	for !date.After(*apiClasses.EndDate) {
+		err = t.FindByDate(ctx, conn, date)
+		if err != sql.ErrNoRows {
+			return errors.New(fmt.Sprintf(constants.TimetableItemDateExistsBatchErrorMsg, date.Format(constants.DateFormat)))
+		}
+		plusDayDate := date.AddDate(0, 0, 1)
+		date = &plusDayDate
+	}
+	return nil
+}
+
+func (m Class) BatchInsert(ctx context.Context, conn *sql.Conn, apiClasses containers.APIClasses) (err error) {
+	err = m.ValidateAPIClasses(ctx, conn, apiClasses)
+	if err != nil {
+		helpers.LogError(err)
+		return
+	}
+	class := Class{}
+	err = class.FindByName(ctx, conn, apiClasses.Name)
+	if err == sql.ErrNoRows {
+		class = Class{
+			Id:       uuid.New().String(),
+			Name:     apiClasses.Name,
+			Capacity: apiClasses.Capacity,
+		}
+		err = class.Insert(ctx, conn)
+		if err != nil {
+			helpers.LogError(err)
+			return
+		}
+	}
+	date := apiClasses.StartDate
+	t := TimetableItem{}
+	for !date.After(*apiClasses.EndDate) {
+		err = t.FindByDate(ctx, conn, date)
+		if err != sql.ErrNoRows {
+			return errors.New(fmt.Sprintf(constants.TimetableItemDateExistsBatchErrorMsg, date.Format(constants.DateFormat)))
+		}
+		t = TimetableItem{
+			Id:      uuid.New().String(),
+			Date:    date,
+			ClassId: class.Id,
+		}
+		err = t.Insert(ctx, conn)
+		if err != nil {
+			helpers.LogError(err)
+			return
+		}
+		plusDay := date.Add(24 * time.Hour)
+		date = &plusDay
+	}
+	return
 }
