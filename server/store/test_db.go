@@ -1,17 +1,34 @@
-package test
+package store
 
 import (
+	"context"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
-	"github.com/vavilen84/class_booking/constants"
 	"github.com/vavilen84/class_booking/helpers"
 	"log"
 	"os"
 	"time"
 )
 
-func InitTestDb() (db *sql.DB) {
+var (
+	testDb *sql.DB
+)
+
+func InitTestDB() {
+	testDb = initTestDb()
+}
+
+func GetNewTestDBConn() (conn *sql.Conn) {
+	ctx := GetDefaultDBContext()
+	conn, err := testDb.Conn(ctx)
+	if err != nil {
+		helpers.LogError(err)
+	}
+	return
+}
+
+func initTestDb() (db *sql.DB) {
 
 	sqlDriver := os.Getenv("SQL_DRIVER")
 	testSqlDsn := os.Getenv("TEST_SQL_DSN")
@@ -28,7 +45,13 @@ func InitTestDb() (db *sql.DB) {
 		if err != nil {
 			panic("failed to connect sql server: " + err.Error())
 		}
-		err = createTestDbIfNotExists(db, os.Getenv("MYSQL_TEST_DATABASE"))
+		ctx := GetDefaultDBContext()
+		conn, err := db.Conn(ctx)
+		if err != nil {
+			helpers.LogError(err)
+		}
+		defer conn.Close()
+		err = createTestDbIfNotExists(ctx, conn, os.Getenv("MYSQL_TEST_DATABASE"))
 		if err != nil {
 			panic("failed to create test db: " + err.Error())
 		}
@@ -45,28 +68,11 @@ func InitTestDb() (db *sql.DB) {
 	return db
 }
 
-func createTestDbIfNotExists(db *sql.DB, dbName string) (err error) {
-	query := `CREATE DATABASE IF NOT EXISTS ` + dbName
-	_, err = db.Exec(query)
+func createTestDbIfNotExists(ctx context.Context, conn *sql.Conn, dbName string) (err error) {
+	_, err = conn.ExecContext(ctx, `CREATE DATABASE IF NOT EXISTS `+dbName)
 	if err != nil {
 		log.Print(err.Error())
 		return err
 	}
 	return nil
-}
-
-func DropAllTables(db *sql.DB) {
-	tables := []string{
-		constants.MigrationsTableName,
-		constants.VisitorTimetableItemTableName,
-		constants.VisitorTableName,
-		constants.TimetableItemTableName,
-		constants.ClassTableName,
-	}
-	for i := 0; i < len(tables); i++ {
-		_, err := db.Exec("DROP TABLE IF EXISTS " + tables[i])
-		if err != nil {
-			log.Println(err)
-		}
-	}
 }

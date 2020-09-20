@@ -1,22 +1,14 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
+	"github.com/vavilen84/class_booking/handlers"
+	"github.com/vavilen84/class_booking/store"
 	"log"
-	"net/http"
-	"time"
 )
 
 func main() {
-	r := mux.NewRouter()
-
-	srv := &http.Server{
-		Handler: r,
-		Addr:    "127.0.0.1:8080",
-		// Good practice: enforce timeouts for servers you create!
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
-	}
-
-	log.Fatal(srv.ListenAndServe())
+	store.InitDB()
+	handler := handlers.MakeHandler()
+	httpServer := handlers.InitHttpServer(handler)
+	log.Fatal(httpServer.ListenAndServe())
 }

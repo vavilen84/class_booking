@@ -1,5 +1,7 @@
 package constants
 
+import "time"
+
 const (
 
 	// struct names
@@ -47,4 +49,10 @@ const (
 	// date
 
 	DateFormat = "2006-01-02"
+
+	// Server
+
+	DefaultWriteTimout  = 60 * time.Second
+	DefaultReadTimeout  = 60 * time.Second
+	DefaultStoreTimeout = 60 * time.Second
 )

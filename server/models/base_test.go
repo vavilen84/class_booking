@@ -1,123 +1,51 @@
 package models
 
 import (
+	"context"
 	"database/sql"
-	"github.com/vavilen84/class_booking/helpers"
-	"github.com/vavilen84/class_booking/test"
+	"github.com/vavilen84/class_booking/constants"
+	"github.com/vavilen84/class_booking/store"
 	"log"
-	"math/rand"
-	"time"
 )
 
-var (
-	testPilatesCapacity = 10
+func init() {
+	store.InitTestDB()
+}
 
-	testNow        = time.Now()
-	testTomorrow   = time.Now().Add(24 * time.Hour)
-	testSeededRand = rand.New(rand.NewSource(time.Now().UnixNano()))
-	testCharset    = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-
-	TestPilatesClass = Class{
-		Id:       "2b99f7e3-1e6a-47d5-839d-9fbff613bfbb",
-		Name:     "Pilates",
-		Capacity: &testPilatesCapacity,
-	}
-	TestYogaClass = Class{
-		Id:       "2b99f7e3-1e6a-47d5-839d-9fbff613bfba",
-		Name:     "Pilates",
-		Capacity: &testPilatesCapacity,
-	}
-	TestVisitor = Visitor{
-		Id:    "2b99f7e3-1e6a-47d5-839d-9fbff613bfbc",
-		Email: "visitor@example.com",
-	}
-	TestVisitor2 = Visitor{
-		Id:    "2b99f7e3-1e6a-47d5-839d-9fbff613bfbf",
-		Email: "visitor2@example.com",
-	}
-	TestTimetableItem = TimetableItem{
-		Id:      "044f4b01-3121-4e9d-b31b-07ba2aa4d544",
-		ClassId: TestYogaClass.Id,
-		Date:    &testNow,
-	}
-	TestTimetableItem2 = TimetableItem{
-		Id:      "7c47e9dc-c451-4797-9888-083324b61352",
-		ClassId: TestYogaClass.Id,
-		Date:    &testTomorrow,
-	}
-	TestVisitorTimetableItem = VisitorTimetableItem{
-		Id:              "1c00116e-5125-46b4-9b87-aa2767b85eaa",
-		VisitorId:       TestVisitor2.Id,
-		TimetableItemId: TestTimetableItem2.Id,
-	}
-)
-
-func PrepareTestDB() (db *sql.DB) {
-	db = test.InitTestDb()
-	test.DropAllTables(db)
-
-	err := CreateMigrationsTableIfNotExists(db)
+/**
+ * ! IMPORTANT - dont use for production DB !
+ */
+func PrepareTestDB(ctx context.Context, conn *sql.Conn) (db *sql.DB) {
+	dropAllTablesFromTestDB(ctx, conn)
+	err := CreateMigrationsTableIfNotExists(ctx, conn)
 	if err != nil {
 		log.Println(err)
 	}
 
-	err = MigrateUp(db)
+	err = MigrateUp(ctx, conn)
 	if err != nil {
 		log.Println(err)
 	}
 
-	loadFixtures(db)
+	loadFixtures(ctx, conn)
 	return
 }
 
-func loadFixtures(db *sql.DB) {
-	c := TestPilatesClass
-	err := Insert(db, c)
-	if err != nil {
-		helpers.LogError(err)
+/**
+ * ! IMPORTANT - dont use for production DB !
+ */
+func dropAllTablesFromTestDB(ctx context.Context, conn *sql.Conn) {
+	tables := []string{
+		constants.MigrationsTableName,
+		constants.VisitorTimetableItemTableName,
+		constants.VisitorTableName,
+		constants.TimetableItemTableName,
+		constants.ClassTableName,
 	}
-
-	y := TestYogaClass
-	err = Insert(db, y)
-	if err != nil {
-		helpers.LogError(err)
+	for i := 0; i < len(tables); i++ {
+		_, err := conn.ExecContext(ctx, "DROP TABLE IF EXISTS "+tables[i])
+		if err != nil {
+			log.Println(err)
+		}
 	}
-
-	v := TestVisitor
-	err = Insert(db, v)
-	if err != nil {
-		helpers.LogError(err)
-	}
-
-	v2 := TestVisitor2
-	err = Insert(db, v2)
-	if err != nil {
-		helpers.LogError(err)
-	}
-
-	t := TestTimetableItem
-	err = Insert(db, t)
-	if err != nil {
-		helpers.LogError(err)
-	}
-
-	t2 := TestTimetableItem2
-	err = Insert(db, t2)
-	if err != nil {
-		helpers.LogError(err)
-	}
-
-	tv := TestVisitorTimetableItem
-	err = Insert(db, tv)
-	if err != nil {
-		helpers.LogError(err)
-	}
-}
-
-func generateRandomString(length int) string {
-	b := make([]byte, length)
-	for i := range b {
-		b[i] = testCharset[testSeededRand.Intn(len(testCharset))]
-	}
-	return string(b)
 }

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -22,42 +23,43 @@ func (m VisitorTimetableItem) GetId() string {
 	return m.Id
 }
 
-func (m VisitorTimetableItem) Insert(db *sql.DB) (err error) {
+func (m VisitorTimetableItem) Insert(ctx context.Context, conn *sql.Conn) (err error) {
 	err = Validate(m)
 	if err != nil {
 		return
 	}
-	err = m.ValidateVisitorExists(db)
+	err = m.ValidateVisitorExists(ctx, conn)
 	if err != nil {
 		return
 	}
-	err = m.ValidateTimetableItemExists(db)
+	err = m.ValidateTimetableItemExists(ctx, conn)
 	if err != nil {
 		return
 	}
-	err, alreadyExists := m.BookingByVisitorAndTimetableItemExists(db)
+	err, alreadyExists := m.BookingByVisitorAndTimetableItemExists(ctx, conn)
 	if err != nil {
 		return
 	}
 	if alreadyExists {
 		return errors.New(fmt.Sprintf(constants.BookingAlreadyExistsErrorMsg, constants.VisitorTimetableItemStructName))
 	}
-	err = database.Insert(db, m)
+	err = database.Insert(ctx, conn, m)
 	return
 }
 
-func (m VisitorTimetableItem) Delete(db *sql.DB) {
-	database.DeleteById(db, m)
+func (m VisitorTimetableItem) Delete(ctx context.Context, conn *sql.Conn) {
+	database.DeleteById(ctx, conn, m)
 }
 
-func (m *VisitorTimetableItem) FindById(db *sql.DB, id string) (err error) {
-	row := db.QueryRow(`SELECT * FROM `+m.GetTableName()+` WHERE id = ?`, id)
+func (m *VisitorTimetableItem) FindById(ctx context.Context, conn *sql.Conn, id string) (err error) {
+	row := conn.QueryRowContext(ctx, `SELECT * FROM `+m.GetTableName()+` WHERE id = ?`, id)
 	err = row.Scan(&m.Id, &m.VisitorId, &m.TimetableItemId)
 	return err
 }
 
-func (m *VisitorTimetableItem) BookingByVisitorAndTimetableItemExists(db *sql.DB) (err error, exists bool) {
-	row := db.QueryRow(
+func (m *VisitorTimetableItem) BookingByVisitorAndTimetableItemExists(ctx context.Context, conn *sql.Conn) (err error, exists bool) {
+	row := conn.QueryRowContext(
+		ctx,
 		`SELECT * FROM `+m.GetTableName()+` WHERE visitor_id = ? AND timetable_item_id = ?`,
 		m.VisitorId,
 		m.TimetableItemId,
@@ -72,9 +74,9 @@ func (m *VisitorTimetableItem) BookingByVisitorAndTimetableItemExists(db *sql.DB
 	return
 }
 
-func (m *VisitorTimetableItem) ValidateVisitorExists(db *sql.DB) error {
+func (m *VisitorTimetableItem) ValidateVisitorExists(ctx context.Context, conn *sql.Conn) error {
 	v := Visitor{}
-	err := v.FindById(db, m.VisitorId)
+	err := v.FindById(ctx, conn, m.VisitorId)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return errors.New(fmt.Sprintf(constants.VisitorDoesNotExistErrorMsg, constants.VisitorTimetableItemStructName))
@@ -84,9 +86,9 @@ func (m *VisitorTimetableItem) ValidateVisitorExists(db *sql.DB) error {
 	return nil
 }
 
-func (m *VisitorTimetableItem) ValidateTimetableItemExists(db *sql.DB) error {
+func (m *VisitorTimetableItem) ValidateTimetableItemExists(ctx context.Context, conn *sql.Conn) error {
 	v := TimetableItem{}
-	err := v.FindById(db, m.TimetableItemId)
+	err := v.FindById(ctx, conn, m.TimetableItemId)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return errors.New(fmt.Sprintf(constants.TimetableItemDoesNotExistErrorMsg, constants.VisitorTimetableItemStructName))

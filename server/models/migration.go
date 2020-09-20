@@ -78,10 +78,10 @@ func getMigrations() (err error, keys []int, list map[int64]Migration) {
 	return
 }
 
-func MigrateUp(db *sql.DB) error {
+func MigrateUp(ctx context.Context, conn *sql.Conn) error {
 	err, keys, list := getMigrations()
 	for _, k := range keys {
-		err = apply(db, k, list)
+		err = apply(ctx, conn, k, list)
 		if err != nil {
 			log.Println(err)
 			return err
@@ -90,15 +90,14 @@ func MigrateUp(db *sql.DB) error {
 	return nil
 }
 
-func performMigrateTx(db *sql.DB, m Migration) error {
-	ctx := context.TODO()
-	tx, beginTxErr := db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
+func performMigrateTx(ctx context.Context, conn *sql.Conn, m Migration) error {
+	tx, beginTxErr := conn.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
 	if beginTxErr != nil {
 		log.Fatal(beginTxErr)
 		return beginTxErr
 	}
 
-	execErr := database.Insert(db, m)
+	execErr := database.TxInsert(ctx, tx, m)
 	if execErr != nil {
 		_ = tx.Rollback()
 		log.Fatal(execErr)
@@ -111,7 +110,7 @@ func performMigrateTx(db *sql.DB, m Migration) error {
 		return readErr
 	}
 	sqlQuery := string(content)
-	_, execErr = tx.Exec(sqlQuery)
+	_, execErr = tx.ExecContext(ctx, sqlQuery)
 	if execErr != nil {
 		_ = tx.Rollback()
 		log.Fatal(execErr)
@@ -125,13 +124,13 @@ func performMigrateTx(db *sql.DB, m Migration) error {
 	return nil
 }
 
-func apply(db *sql.DB, k int, list map[int64]Migration) error {
+func apply(ctx context.Context, conn *sql.Conn, k int, list map[int64]Migration) error {
 	m := list[int64(k)]
-	row := db.QueryRow(`SELECT version FROM `+constants.MigrationsTableName+` WHERE version = ?`, m.Version)
+	row := conn.QueryRowContext(ctx, `SELECT version FROM `+constants.MigrationsTableName+` WHERE version = ?`, m.Version)
 	var version int64
 	err := row.Scan(&version)
 	if err == sql.ErrNoRows {
-		err = performMigrateTx(db, m)
+		err = performMigrateTx(ctx, conn, m)
 		if err != nil {
 			log.Println(err)
 			return err
@@ -142,7 +141,7 @@ func apply(db *sql.DB, k int, list map[int64]Migration) error {
 	return nil
 }
 
-func CreateMigrationsTableIfNotExists(db *sql.DB) error {
+func CreateMigrationsTableIfNotExists(ctx context.Context, conn *sql.Conn) error {
 	query := `
 		CREATE TABLE IF NOT EXISTS ` + constants.MigrationsTableName + `
 		(
@@ -152,7 +151,7 @@ func CreateMigrationsTableIfNotExists(db *sql.DB) error {
 			created_at integer NOT NULL
 		)
 	`
-	_, err := db.Exec(query)
+	_, err := conn.ExecContext(ctx, query)
 	if err != nil {
 		log.Print(err.Error())
 		return err

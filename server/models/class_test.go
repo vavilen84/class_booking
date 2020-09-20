@@ -6,6 +6,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/class_booking/constants"
+	"github.com/vavilen84/class_booking/helpers"
+	"github.com/vavilen84/class_booking/store"
 	"testing"
 )
 
@@ -41,7 +43,7 @@ func TestClassValidateUuid4Tag(t *testing.T) {
 func TestClassValidateMaxValueTag(t *testing.T) {
 	notValidCapacity := 51
 	c := Class{
-		Name:     generateRandomString(256),
+		Name:     helpers.GenerateRandomString(256),
 		Capacity: &notValidCapacity,
 	}
 	err := Validate(c)
@@ -51,7 +53,11 @@ func TestClassValidateMaxValueTag(t *testing.T) {
 }
 
 func TestClassInsert(t *testing.T) {
-	db := PrepareTestDB()
+	ctx := store.GetDefaultDBContext()
+	conn := store.GetNewTestDBConn()
+	defer conn.Close()
+	PrepareTestDB(ctx, conn)
+
 	capacity := 10
 	id := uuid.New().String()
 	name := "Crossfit"
@@ -60,11 +66,11 @@ func TestClassInsert(t *testing.T) {
 		Name:     name,
 		Capacity: &capacity,
 	}
-	err := c.Insert(db)
+	err := c.Insert(ctx, conn)
 	assert.Nil(t, err)
 
 	c = Class{}
-	err = c.FindById(db, id)
+	err = c.FindById(ctx, conn, id)
 	assert.Nil(t, err)
 	assert.Equal(t, c.Id, id)
 	assert.Equal(t, c.Name, name)
@@ -72,9 +78,13 @@ func TestClassInsert(t *testing.T) {
 }
 
 func TestClassFindById(t *testing.T) {
-	db := PrepareTestDB()
+	ctx := store.GetDefaultDBContext()
+	conn := store.GetNewTestDBConn()
+	defer conn.Close()
+	PrepareTestDB(ctx, conn)
+
 	m := Class{}
-	err := m.FindById(db, TestPilatesClass.Id)
+	err := m.FindById(ctx, conn, TestPilatesClass.Id)
 	assert.Nil(t, err)
 	assert.Equal(t, TestPilatesClass.Id, m.Id)
 	assert.Equal(t, TestPilatesClass.Name, m.Name)
@@ -82,9 +92,13 @@ func TestClassFindById(t *testing.T) {
 }
 
 func TestClassUpdate(t *testing.T) {
-	db := PrepareTestDB()
+	ctx := store.GetDefaultDBContext()
+	conn := store.GetNewTestDBConn()
+	defer conn.Close()
+	PrepareTestDB(ctx, conn)
+
 	m := Class{}
-	err := m.FindById(db, TestPilatesClass.Id)
+	err := m.FindById(ctx, conn, TestPilatesClass.Id)
 	assert.Nil(t, err)
 	assert.Equal(t, TestPilatesClass.Id, m.Id)
 	assert.Equal(t, TestPilatesClass.Name, m.Name)
@@ -92,11 +106,11 @@ func TestClassUpdate(t *testing.T) {
 
 	updatedName := "Updated Name"
 	m.Name = updatedName
-	err = m.Update(db)
+	err = m.Update(ctx, conn)
 	assert.Nil(t, err)
 	assert.Equal(t, updatedName, m.Name)
 
-	err = m.FindById(db, TestPilatesClass.Id)
+	err = m.FindById(ctx, conn, TestPilatesClass.Id)
 	assert.Nil(t, err)
 	assert.Equal(t, TestPilatesClass.Id, m.Id)
 	assert.Equal(t, updatedName, m.Name)
@@ -104,16 +118,21 @@ func TestClassUpdate(t *testing.T) {
 }
 
 func TestClassDelete(t *testing.T) {
-	db := PrepareTestDB()
+	ctx := store.GetDefaultDBContext()
+	conn := store.GetNewTestDBConn()
+	defer conn.Close()
+	PrepareTestDB(ctx, conn)
+
 	m := Class{}
-	err := m.FindById(db, TestPilatesClass.Id)
+	err := m.FindById(ctx, conn, TestPilatesClass.Id)
 	assert.Nil(t, err)
 	assert.Equal(t, TestPilatesClass.Id, m.Id)
 	assert.Equal(t, TestPilatesClass.Name, m.Name)
 	assert.Equal(t, TestPilatesClass.Capacity, m.Capacity)
 
-	m.Delete(db)
+	err = m.Delete(ctx, conn)
+	assert.Nil(t, err)
 
-	err = m.FindById(db, TestPilatesClass.Id)
+	err = m.FindById(ctx, conn, TestPilatesClass.Id)
 	assert.Equal(t, sql.ErrNoRows, err)
 }

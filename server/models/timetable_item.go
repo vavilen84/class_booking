@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -23,51 +24,51 @@ func (m TimetableItem) GetId() string {
 	return m.Id
 }
 
-func (m TimetableItem) Insert(db *sql.DB) (err error) {
+func (m TimetableItem) Insert(ctx context.Context, conn *sql.Conn) (err error) {
 	err = Validate(m)
 	if err != nil {
 		return
 	}
-	err = m.ValidateDate(db)
+	err = m.ValidateDate(ctx, conn)
 	if err != nil {
 		return
 	}
-	err = m.ValidateClassExists(db)
+	err = m.ValidateClassExists(ctx, conn)
 	if err != nil {
 		return
 	}
-	err = database.Insert(db, m)
+	err = database.Insert(ctx, conn, m)
 	return
 }
 
-func (m TimetableItem) Delete(db *sql.DB) {
-	database.DeleteById(db, m)
+func (m TimetableItem) Delete(ctx context.Context, conn *sql.Conn) {
+	database.DeleteById(ctx, conn, m)
 }
 
-func (m *TimetableItem) FindById(db *sql.DB, id string) (err error) {
-	row := db.QueryRow(`SELECT * FROM `+m.GetTableName()+` WHERE id = ?`, id)
+func (m *TimetableItem) FindById(ctx context.Context, conn *sql.Conn, id string) (err error) {
+	row := conn.QueryRowContext(ctx, `SELECT * FROM `+m.GetTableName()+` WHERE id = ?`, id)
 	err = row.Scan(&m.Id, &m.ClassId, &m.Date)
 	return err
 }
 
-func (m *TimetableItem) FindByDate(db *sql.DB, date *time.Time) (err error) {
-	row := db.QueryRow(`SELECT * FROM `+m.GetTableName()+` WHERE date = ?`, date.Format(constants.DateFormat))
+func (m *TimetableItem) FindByDate(ctx context.Context, conn *sql.Conn, date *time.Time) (err error) {
+	row := conn.QueryRowContext(ctx, `SELECT * FROM `+m.GetTableName()+` WHERE date = ?`, date.Format(constants.DateFormat))
 	err = row.Scan(&m.Id, &m.ClassId, &m.Date)
 	return err
 }
 
-func (m TimetableItem) ValidateDate(db *sql.DB) error {
+func (m TimetableItem) ValidateDate(ctx context.Context, conn *sql.Conn) error {
 	existingClass := TimetableItem{}
-	err := existingClass.FindByDate(db, m.Date)
+	err := existingClass.FindByDate(ctx, conn, m.Date)
 	if err != sql.ErrNoRows {
 		return errors.New(fmt.Sprintf(constants.TimetableItemDateExistsErrorMsg, constants.TimetableItemStructName))
 	}
 	return nil
 }
 
-func (m TimetableItem) ValidateClassExists(db *sql.DB) error {
+func (m TimetableItem) ValidateClassExists(ctx context.Context, conn *sql.Conn) error {
 	class := Class{}
-	err := class.FindById(db, m.ClassId)
+	err := class.FindById(ctx, conn, m.ClassId)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return errors.New(fmt.Sprintf(constants.ClassDoesNotExistErrorMsg, constants.TimetableItemStructName))

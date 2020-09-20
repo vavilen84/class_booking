@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"database/sql"
 	"github.com/vavilen84/class_booking/constants"
 	"github.com/vavilen84/class_booking/database"
@@ -20,30 +21,30 @@ func (m Class) GetId() string {
 	return m.Id
 }
 
-func (m Class) Insert(db *sql.DB) (err error) {
+func (m Class) Insert(ctx context.Context, conn *sql.Conn) (err error) {
 	err = Validate(m)
 	if err != nil {
 		return
 	}
-	err = database.Insert(db, m)
+	err = database.Insert(ctx, conn, m)
 	return
 }
 
-func (m Class) Update(db *sql.DB) (err error) {
+func (m Class) Update(ctx context.Context, conn *sql.Conn) (err error) {
 	err = Validate(m)
 	if err != nil {
 		return
 	}
-	err = database.Update(db, m)
+	err = database.Update(ctx, conn, m)
 	return
 }
 
-func (m Class) Delete(db *sql.DB) {
-	database.DeleteById(db, m)
+func (m Class) Delete(ctx context.Context, conn *sql.Conn) error {
+	return database.DeleteById(ctx, conn, m)
 }
 
-func (m *Class) FindById(db *sql.DB, id string) (err error) {
-	row := db.QueryRow(`SELECT * FROM `+m.GetTableName()+` WHERE id = ?`, id)
+func (m *Class) FindById(ctx context.Context, conn *sql.Conn, id string) (err error) {
+	row := conn.QueryRowContext(ctx, `SELECT * FROM `+m.GetTableName()+` WHERE id = ?`, id)
 	err = row.Scan(&m.Id, &m.Name, &m.Capacity)
 	return err
 }
