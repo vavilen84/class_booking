@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"database/sql"
+	"github.com/google/uuid"
 	"github.com/vavilen84/class_booking/constants"
 	"github.com/vavilen84/class_booking/database"
 	"github.com/vavilen84/class_booking/helpers"
@@ -17,6 +18,7 @@ import (
 )
 
 type Migration struct {
+	Id        string `json:"id" column:"id" validate:"required,uuid4"`
 	Version   int64  `json:"version" column:"version" validate:"required"`
 	Filename  string `json:"filename" column:"filename" validate:"required"`
 	CreatedAt int64  `json:"created_at" column:"created_at" validate:"required"`
@@ -27,8 +29,7 @@ func (Migration) GetTableName() string {
 }
 
 func (m Migration) GetId() string {
-	// TODO ID not needed for Migration
-	return ""
+	return m.Id
 }
 
 func getMigration(info os.FileInfo) (err error, m Migration) {
@@ -41,6 +42,7 @@ func getMigration(info os.FileInfo) (err error, m Migration) {
 	}
 
 	m = Migration{
+		Id:        uuid.New().String(),
 		Filename:  filename,
 		Version:   int64(version),
 		CreatedAt: time.Now().Unix(),
@@ -144,7 +146,8 @@ func CreateMigrationsTableIfNotExists(db *sql.DB) error {
 	query := `
 		CREATE TABLE IF NOT EXISTS ` + constants.MigrationsTableName + `
 		(
-			version integer PRIMARY KEY,
+    		id varchar(255) NOT NULL PRIMARY KEY,
+			version integer NOT NULL,
 			filename text NOT NULL,
 			created_at integer NOT NULL
 		)
