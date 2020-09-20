@@ -4,8 +4,9 @@ const (
 
 	// struct names
 
-	ClassStructName   = "Class"
-	VisitorStructName = "Visitor"
+	ClassStructName         = "Class"
+	VisitorStructName       = "Visitor"
+	TimetableItemStructName = "TimetableItem"
 
 	// db table names
 
@@ -29,8 +30,13 @@ const (
 	RequiredErrorMsg = "%s resource: '%s' is required"
 	MinValueErrorMsg = "%s resource: '%s' min value is %s"
 	MaxValueErrorMsg = "%s resource: '%s' max value is %s"
-	Uuid4ErrorMsg    = "%s resource: id is not valid uuid4"
+	Uuid4ErrorMsg    = "%s resource: '%s' is not valid uuid4"
 	EmailErrorMsg    = "%s resource: email is not valid"
 
-	VisitorEmailExistsErrorMsg = "%s resource: email is already register"
+	VisitorEmailExistsErrorMsg      = "%s resource: email is already registered"
+	TimetableItemDateExistsErrorMsg = "%s resource: date is already registered"
+
+	// date
+
+	DateFormat = "2006-01-02"
 )

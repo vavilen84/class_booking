@@ -12,8 +12,17 @@ import (
 var (
 	testPilatesCapacity = 10
 
+	testNow        = time.Now()
+	testSeededRand = rand.New(rand.NewSource(time.Now().UnixNano()))
+	testCharset    = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
 	TestPilatesClass = Class{
 		Id:       "2b99f7e3-1e6a-47d5-839d-9fbff613bfbb",
+		Name:     "Pilates",
+		Capacity: &testPilatesCapacity,
+	}
+	TestYogaClass = Class{
+		Id:       "2b99f7e3-1e6a-47d5-839d-9fbff613bfba",
 		Name:     "Pilates",
 		Capacity: &testPilatesCapacity,
 	}
@@ -21,8 +30,11 @@ var (
 		Id:    "2b99f7e3-1e6a-47d5-839d-9fbff613bfbc",
 		Email: "visitor@example.com",
 	}
-
-	seededRand *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
+	TestTimetableItem = TimetableItem{
+		Id:      "2b99f7e3-1e6a-47d5-839d-9fbff613bfby",
+		ClassId: TestYogaClass.Id,
+		Date:    &testNow,
+	}
 )
 
 func PrepareTestDB() (db *sql.DB) {
@@ -50,18 +62,29 @@ func loadFixtures(db *sql.DB) {
 		helpers.LogError(err)
 	}
 
+	y := TestYogaClass
+	err = Insert(db, y)
+	if err != nil {
+		helpers.LogError(err)
+	}
+
 	v := TestVisitor
 	err = Insert(db, v)
+	if err != nil {
+		helpers.LogError(err)
+	}
+
+	t := TestTimetableItem
+	err = Insert(db, t)
 	if err != nil {
 		helpers.LogError(err)
 	}
 }
 
 func generateRandomString(length int) string {
-	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	b := make([]byte, length)
 	for i := range b {
-		b[i] = charset[seededRand.Intn(len(charset))]
+		b[i] = testCharset[testSeededRand.Intn(len(testCharset))]
 	}
 	return string(b)
 }

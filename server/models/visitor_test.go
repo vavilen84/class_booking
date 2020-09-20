@@ -31,7 +31,7 @@ func TestVisitorValidateUuid4Tag(t *testing.T) {
 	}
 	err := Validate(v)
 	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), fmt.Sprintf(constants.Uuid4ErrorMsg, constants.VisitorStructName))
+	assert.Contains(t, err.Error(), fmt.Sprintf(constants.Uuid4ErrorMsg, constants.VisitorStructName, "Id"))
 }
 
 func TestVisitorInsert(t *testing.T) {

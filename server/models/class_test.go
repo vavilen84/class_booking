@@ -35,7 +35,7 @@ func TestClassValidateUuid4Tag(t *testing.T) {
 	}
 	err := Validate(c)
 	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), fmt.Sprintf(constants.Uuid4ErrorMsg, constants.ClassStructName))
+	assert.Contains(t, err.Error(), fmt.Sprintf(constants.Uuid4ErrorMsg, constants.ClassStructName, "Id"))
 }
 
 func TestClassValidateMaxValueTag(t *testing.T) {

@@ -34,7 +34,7 @@ func (s *StructError) setErrorMessage() {
 	case constants.MaxTag:
 		s.Message = fmt.Sprintf(constants.MaxValueErrorMsg, s.Name, s.Field, s.Param)
 	case constants.Uuid4Tag:
-		s.Message = fmt.Sprintf(constants.Uuid4ErrorMsg, s.Name)
+		s.Message = fmt.Sprintf(constants.Uuid4ErrorMsg, s.Name, s.Field)
 	case constants.EmailTag:
 		s.Message = fmt.Sprintf(constants.EmailErrorMsg, s.Name)
 	}
