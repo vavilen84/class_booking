@@ -32,6 +32,10 @@ func (m TimetableItem) Insert(db *sql.DB) (err error) {
 	if err != nil {
 		return
 	}
+	err = m.ValidateClassExists(db)
+	if err != nil {
+		return
+	}
 	err = database.Insert(db, m)
 	return
 }
@@ -57,6 +61,18 @@ func (m TimetableItem) ValidateDate(db *sql.DB) error {
 	err := existingClass.FindByDate(db, m.Date)
 	if err != sql.ErrNoRows {
 		return errors.New(fmt.Sprintf(constants.TimetableItemDateExistsErrorMsg, constants.TimetableItemStructName))
+	}
+	return nil
+}
+
+func (m TimetableItem) ValidateClassExists(db *sql.DB) error {
+	class := Class{}
+	err := class.FindById(db, m.ClassId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return errors.New(fmt.Sprintf(constants.ClassDoesNotExistErrorMsg, constants.TimetableItemStructName))
+		}
+		return err
 	}
 	return nil
 }

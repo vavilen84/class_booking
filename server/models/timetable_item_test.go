@@ -52,7 +52,7 @@ func TestTimetableItemFindById(t *testing.T) {
 func TestTimetableItemInsert(t *testing.T) {
 	db := PrepareTestDB()
 	id := uuid.New().String()
-	d := testNow.Add(24 * time.Hour)
+	d := testNow.Add(48 * time.Hour)
 	v := TimetableItem{
 		Id:      id,
 		ClassId: TestYogaClass.Id,
@@ -82,6 +82,19 @@ func TestTimetableItemValidateDate(t *testing.T) {
 	assert.Contains(t, err.Error(), fmt.Sprintf(constants.TimetableItemDateExistsErrorMsg, constants.TimetableItemStructName))
 }
 
+func TestTimetableItemValidateClassExists(t *testing.T) {
+	db := PrepareTestDB()
+	id := uuid.New().String()
+	v := TimetableItem{
+		Id:      id,
+		ClassId: "not_existing_class_id",
+		Date:    TestTimetableItem.Date,
+	}
+	err := v.ValidateClassExists(db)
+	assert.NotNil(t, err)
+	assert.Contains(t, err.Error(), fmt.Sprintf(constants.ClassDoesNotExistErrorMsg, constants.TimetableItemStructName))
+}
+
 func TestTimetableItemInsertWithAlreadyRegisteredDate(t *testing.T) {
 	db := PrepareTestDB()
 	id := uuid.New().String()
@@ -93,6 +106,20 @@ func TestTimetableItemInsertWithAlreadyRegisteredDate(t *testing.T) {
 	err := v.Insert(db)
 	assert.NotNil(t, err)
 	assert.Contains(t, err.Error(), fmt.Sprintf(constants.TimetableItemDateExistsErrorMsg, constants.TimetableItemStructName))
+}
+
+func TestTimetableItemInsertWithNotExistingClass(t *testing.T) {
+	db := PrepareTestDB()
+	id := uuid.New().String()
+	d := time.Now().Add(72 * time.Hour)
+	v := TimetableItem{
+		Id:      id,
+		ClassId: uuid.New().String(),
+		Date:    &d,
+	}
+	err := v.Insert(db)
+	assert.NotNil(t, err)
+	assert.Contains(t, err.Error(), fmt.Sprintf(constants.ClassDoesNotExistErrorMsg, constants.TimetableItemStructName))
 }
 
 func TestTimetableItemDelete(t *testing.T) {
