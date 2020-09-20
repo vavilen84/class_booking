@@ -47,8 +47,8 @@ func (m VisitorTimetableItem) Insert(ctx context.Context, conn *sql.Conn) (err e
 	return
 }
 
-func (m VisitorTimetableItem) Delete(ctx context.Context, conn *sql.Conn) {
-	database.DeleteById(ctx, conn, m)
+func (m VisitorTimetableItem) Delete(ctx context.Context, conn *sql.Conn) error {
+	return database.DeleteById(ctx, conn, m)
 }
 
 func (m *VisitorTimetableItem) FindById(ctx context.Context, conn *sql.Conn, id string) (err error) {
