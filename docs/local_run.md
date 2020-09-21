@@ -8,8 +8,14 @@ cd path/to/prject
 cat .env.dist >> .env
 ```
 Set PROJECT_ROOT env var according to your project path. It should forward to 'server' Golang application. Ex.:
-- path/to/prject is /var/www/class_booking
+- path/to/project is /var/www/class_booking
 - PROJECT_ROOT=/var/www/class_booking/server
+
+##### Make all .sh files executable
+```
+cd path/to/project
+find . -type f -iname "*.sh" -exec chmod +x {} \;
+```
 
 ##### MySQL
 

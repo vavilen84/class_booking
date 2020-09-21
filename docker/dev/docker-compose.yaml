@@ -18,6 +18,7 @@ services:
     expose:
       - "8080"
     environment:
+      - DOCKER_MYSQL_HOST_MACHINE=false
       - DOCKER=true
     ports:
       - "8080:8080"

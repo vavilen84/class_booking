@@ -14,6 +14,12 @@ Set PROJECT_ROOT env var according to your project path. It should forward to 's
 - path/to/project is /var/www/class_booking
 - PROJECT_ROOT=/var/www/class_booking/server
 
+##### Make all .sh files executable
+```
+cd path/to/project
+find . -type f -iname "*.sh" -exec chmod +x {} \;
+```
+
 ##### Run project
 
 ```

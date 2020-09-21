@@ -45,9 +45,9 @@ func initTestDBForDockerMySql() *sql.DB {
 }
 
 func initTestDBForHostMachineMySql() *sql.DB {
-	sqlServerDsn := os.Getenv("HOST_MACHINE_SQL_DSN")
-	mysqlDbName := os.Getenv("MYSQL_TEST_DATABASE")
-	DbDsn := os.Getenv("HOST_MACHINE_TEST_SQL_DSN")
+	sqlServerDsn := setHostAddress(os.Getenv("HOST_MACHINE_SQL_DSN"))
+	mysqlDbName := setHostAddress(os.Getenv("MYSQL_TEST_DATABASE"))
+	DbDsn := setHostAddress(os.Getenv("HOST_MACHINE_TEST_SQL_DSN"))
 	return processInitDb(sqlServerDsn, mysqlDbName, DbDsn)
 }
 
