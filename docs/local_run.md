@@ -25,21 +25,21 @@ To make your work with project easier you can use [PHPMyAdmin](https://www.phpmy
 ##### Run migrations 
 
 ```
-cd PROJECT_ROOT
+cd PROJECT_ROOT (path to 'server' Golang APP)
 go run cli/db/migrate/up/up.go
 ```
 
 ##### Run tests
 
 ```
-cd PROJECT_ROOT
+cd PROJECT_ROOT (path to 'server' Golang APP)
 go test ./... -p 1 -count=1 -v
 ```
 
 ##### Run server
 
 ```
-cd PROJECT_ROOT
+cd PROJECT_ROOT (path to 'server' Golang APP)
 go run main.go
 ```
 
