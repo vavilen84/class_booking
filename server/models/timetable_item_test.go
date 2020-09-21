@@ -31,10 +31,9 @@ func TestTimetableItemValidateUuid4Tag(t *testing.T) {
 }
 
 func TestTimetableItemFindByDate(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	m := TimetableItem{}
 	err := m.FindByDate(ctx, conn, TestTimetableItem.Date)
@@ -45,10 +44,9 @@ func TestTimetableItemFindByDate(t *testing.T) {
 }
 
 func TestTimetableItemFindById(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	m := TimetableItem{}
 	err := m.FindById(ctx, conn, TestTimetableItem.Id)
@@ -59,10 +57,9 @@ func TestTimetableItemFindById(t *testing.T) {
 }
 
 func TestTimetableItemInsert(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	id := uuid.New().String()
 	d := testNow.Add(48 * time.Hour)
@@ -83,10 +80,9 @@ func TestTimetableItemInsert(t *testing.T) {
 }
 
 func TestTimetableItemValidateDate(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	id := uuid.New().String()
 	v := TimetableItem{
@@ -100,10 +96,9 @@ func TestTimetableItemValidateDate(t *testing.T) {
 }
 
 func TestTimetableItemValidateClassExists(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	id := uuid.New().String()
 	v := TimetableItem{
@@ -117,10 +112,9 @@ func TestTimetableItemValidateClassExists(t *testing.T) {
 }
 
 func TestTimetableItemInsertWithAlreadyRegisteredDate(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	id := uuid.New().String()
 	v := TimetableItem{
@@ -134,10 +128,9 @@ func TestTimetableItemInsertWithAlreadyRegisteredDate(t *testing.T) {
 }
 
 func TestTimetableItemInsertWithNotExistingClass(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	id := uuid.New().String()
 	d := time.Now().Add(72 * time.Hour)
@@ -152,10 +145,9 @@ func TestTimetableItemInsertWithNotExistingClass(t *testing.T) {
 }
 
 func TestTimetableItemDelete(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	v := TimetableItem{}
 	err := v.FindById(ctx, conn, TestTimetableItem.Id)

@@ -15,7 +15,7 @@ func init() {
 /**
  * ! IMPORTANT - dont use for production DB !
  */
-func PrepareTestDB(ctx context.Context, conn *sql.Conn) (db *sql.DB) {
+func prepareTestDB(ctx context.Context, conn *sql.Conn) {
 	dropAllTablesFromTestDB(ctx, conn)
 	err := CreateMigrationsTableIfNotExists(ctx, conn)
 	if err != nil {
@@ -27,7 +27,7 @@ func PrepareTestDB(ctx context.Context, conn *sql.Conn) (db *sql.DB) {
 		log.Println(err)
 	}
 
-	loadFixtures(ctx, conn)
+	LoadFixtures(ctx, conn)
 	return
 }
 

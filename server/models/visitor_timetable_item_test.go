@@ -34,10 +34,9 @@ func TestVisitorTimetableItemValidateUuid4Tag(t *testing.T) {
 }
 
 func TestVisitorTimetableItemBookingByVisitorAndTimetableItemExists(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	m := TestVisitorTimetableItem
 	err, exists := m.BookingByVisitorAndTimetableItemExists(ctx, conn)
@@ -55,10 +54,9 @@ func TestVisitorTimetableItemBookingByVisitorAndTimetableItemExists(t *testing.T
 }
 
 func TestVisitorTimetableItemValidateTimetableItemExists(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	m := TestVisitorTimetableItem
 	err := m.ValidateTimetableItemExists(ctx, conn)
@@ -76,10 +74,9 @@ func TestVisitorTimetableItemValidateTimetableItemExists(t *testing.T) {
 }
 
 func TestVisitorTimetableItemFindById(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	m := VisitorTimetableItem{}
 	err := m.FindById(ctx, conn, TestVisitorTimetableItem.Id)
@@ -90,10 +87,9 @@ func TestVisitorTimetableItemFindById(t *testing.T) {
 }
 
 func TestVisitorTimetableItemInsert(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	id := uuid.New().String()
 	v := VisitorTimetableItem{
@@ -113,10 +109,9 @@ func TestVisitorTimetableItemInsert(t *testing.T) {
 }
 
 func TestVisitorTimetableItemInsertAlreadyExistingBooking(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	v := TestVisitorTimetableItem
 	err := v.Insert(ctx, conn)
@@ -128,10 +123,9 @@ func TestVisitorTimetableItemInsertAlreadyExistingBooking(t *testing.T) {
 }
 
 func TestVisitorTimetableItemInsertWithNotExistingVisitorAndTimetableItem(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	m := VisitorTimetableItem{
 		Id:              uuid.New().String(),
@@ -145,10 +139,9 @@ func TestVisitorTimetableItemInsertWithNotExistingVisitorAndTimetableItem(t *tes
 }
 
 func TestVisitorTimetableItemDelete(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	v := TestVisitorTimetableItem
 	err := v.FindById(ctx, conn, TestVisitorTimetableItem.Id)
@@ -163,10 +156,9 @@ func TestVisitorTimetableItemDelete(t *testing.T) {
 }
 
 func TestVisitorTimetableItemValidateAPIBookings(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	ab := containers.APIBookings{}
 	vti := VisitorTimetableItem{}

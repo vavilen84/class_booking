@@ -26,7 +26,8 @@ func Classes(w http.ResponseWriter, r *http.Request) {
 	err = class.ValidateAPIClasses(ctx, conn, apiClasses)
 	if err != nil {
 		helpers.LogError(err)
-		http.Error(w, "Unprocessable Entity", http.StatusUnprocessableEntity)
+		w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
+		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 

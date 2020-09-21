@@ -19,8 +19,8 @@ func InitTestDB() {
 	testDb = initTestDb()
 }
 
-func GetNewTestDBConn() (conn *sql.Conn) {
-	ctx := GetDefaultDBContext()
+func GetNewTestDBConn() (conn *sql.Conn, ctx context.Context) {
+	ctx = GetDefaultDBContext()
 	conn, err := testDb.Conn(ctx)
 	if err != nil {
 		helpers.LogError(err)
@@ -36,7 +36,11 @@ func initTestDb() (db *sql.DB) {
 		//if we run test outside docker using host machine sql server - we need to load .env vars
 		err := godotenv.Load("../../.env")
 		if err != nil {
-			helpers.LogError(err)
+			// TODO fix .env path outside of docker
+			err = godotenv.Load("../.env")
+			if err != nil {
+				helpers.LogError(err)
+			}
 		}
 		sqlDriver = os.Getenv("SQL_DRIVER")
 		// use credentials without db in order to create test db

@@ -53,8 +53,12 @@ func getMigration(info os.FileInfo) (err error, m Migration) {
 func getMigrations() (err error, keys []int, list map[int64]Migration) {
 	list = make(map[int64]Migration)
 	keys = make([]int, 0)
-
-	err = filepath.Walk("../"+constants.MigrationsFolder, func(path string, info os.FileInfo, err error) error {
+	pwd, err := os.Getwd()
+	if err != nil {
+		helpers.LogError(err)
+		os.Exit(1)
+	}
+	err = filepath.Walk(pwd+"/"+constants.MigrationsFolder, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			helpers.LogError(err)
 		}
@@ -103,8 +107,12 @@ func performMigrateTx(ctx context.Context, conn *sql.Conn, m Migration) error {
 		log.Fatal(execErr)
 		return execErr
 	}
-
-	content, readErr := ioutil.ReadFile("../" + constants.MigrationsFolder + "/" + m.Filename)
+	pwd, err := os.Getwd()
+	if err != nil {
+		helpers.LogError(err)
+		os.Exit(1)
+	}
+	content, readErr := ioutil.ReadFile(pwd + "/" + constants.MigrationsFolder + "/" + m.Filename)
 	if readErr != nil {
 		log.Fatal(readErr)
 		return readErr

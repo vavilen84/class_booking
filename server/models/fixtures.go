@@ -48,7 +48,7 @@ var (
 	}
 )
 
-func loadFixtures(ctx context.Context, conn *sql.Conn) {
+func LoadFixtures(ctx context.Context, conn *sql.Conn) {
 	c := TestPilatesClass
 	err := database.Insert(ctx, conn, c)
 	if err != nil {

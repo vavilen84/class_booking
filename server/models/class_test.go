@@ -55,10 +55,9 @@ func TestClassValidateMaxValueTag(t *testing.T) {
 }
 
 func TestClassInsert(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	capacity := 10
 	id := uuid.New().String()
@@ -80,10 +79,9 @@ func TestClassInsert(t *testing.T) {
 }
 
 func TestClassFindById(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	m := Class{}
 	err := m.FindById(ctx, conn, TestPilatesClass.Id)
@@ -94,10 +92,9 @@ func TestClassFindById(t *testing.T) {
 }
 
 func TestClassUpdate(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	m := Class{}
 	err := m.FindById(ctx, conn, TestPilatesClass.Id)
@@ -120,10 +117,9 @@ func TestClassUpdate(t *testing.T) {
 }
 
 func TestClassDelete(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	m := Class{}
 	err := m.FindById(ctx, conn, TestPilatesClass.Id)
@@ -140,10 +136,9 @@ func TestClassDelete(t *testing.T) {
 }
 
 func TestClassFindByName(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	m := Class{}
 	err := m.FindByName(ctx, conn, TestPilatesClass.Name)
@@ -154,10 +149,9 @@ func TestClassFindByName(t *testing.T) {
 }
 
 func TestValidateAPIClasses(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	c := 10
 	class := Class{}
@@ -204,10 +198,9 @@ func TestValidateAPIClasses(t *testing.T) {
 }
 
 func TestClassBatchInsert(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	startDate := time.Now().AddDate(0, 0, 2)
 	endDate := time.Now().AddDate(0, 0, 21)

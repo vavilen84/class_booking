@@ -19,6 +19,9 @@ func InitDB() {
 }
 
 func GetNewDBConn() (conn *sql.Conn, ctx context.Context) {
+	if os.Getenv("APP_ENV") == "test" {
+		return GetNewTestDBConn()
+	}
 	ctx = GetDefaultDBContext()
 	conn, err := db.Conn(ctx)
 	if err != nil {

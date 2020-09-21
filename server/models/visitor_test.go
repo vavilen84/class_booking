@@ -36,10 +36,9 @@ func TestVisitorValidateUuid4Tag(t *testing.T) {
 }
 
 func TestVisitorInsert(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	id := uuid.New().String()
 	email := "new_visitor@example.com"
@@ -58,10 +57,9 @@ func TestVisitorInsert(t *testing.T) {
 }
 
 func TestVisitorInsertWithAlreadyRegisteredEmail(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	id := uuid.New().String()
 	v := Visitor{
@@ -74,10 +72,9 @@ func TestVisitorInsertWithAlreadyRegisteredEmail(t *testing.T) {
 }
 
 func TestVisitorUpdateWithAlreadyRegisteredEmail(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	id := uuid.New().String()
 	email := "new_visitor@example.com"
@@ -95,10 +92,9 @@ func TestVisitorUpdateWithAlreadyRegisteredEmail(t *testing.T) {
 }
 
 func TestVisitorFindById(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	v := Visitor{}
 	err := v.FindById(ctx, conn, TestVisitor.Id)
@@ -108,10 +104,9 @@ func TestVisitorFindById(t *testing.T) {
 }
 
 func TestVisitorUpdate(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	v := Visitor{}
 	err := v.FindById(ctx, conn, TestVisitor.Id)
@@ -133,10 +128,9 @@ func TestVisitorUpdate(t *testing.T) {
 }
 
 func TestVisitorDelete(t *testing.T) {
-	ctx := store.GetDefaultDBContext()
-	conn := store.GetNewTestDBConn()
+	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()
-	PrepareTestDB(ctx, conn)
+	prepareTestDB(ctx, conn)
 
 	v := Visitor{}
 	err := v.FindById(ctx, conn, TestVisitor.Id)
