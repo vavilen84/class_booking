@@ -36,14 +36,21 @@ func Bookings(w http.ResponseWriter, r *http.Request) {
 	err = v.FindByEmail(ctx, conn, apiBookings.Email)
 	if err != nil {
 		if err == sql.ErrNoRows {
+			v = models.Visitor{
+				Id:    uuid.New().String(),
+				Email: apiBookings.Email,
+			}
+			err = v.Insert(ctx, conn)
+			if err != nil {
+				helpers.LogError(err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+		} else {
 			helpers.LogError(err)
-			http.Error(w, "Bad Request", http.StatusBadRequest)
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return
 		}
-
-		helpers.LogError(err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
 	}
 
 	ti := models.TimetableItem{}
