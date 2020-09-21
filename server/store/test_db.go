@@ -27,7 +27,7 @@ func GetNewTestDBConn() (conn *sql.Conn, ctx context.Context) {
 }
 
 func initTestDBForLocalhostAppRun() *sql.DB {
-	err := godotenv.Load("../.env")
+	err := godotenv.Load("../../.env")
 	if err != nil {
 		helpers.LogError(err)
 	}

@@ -4,6 +4,7 @@
 
 Create .env file
 ```
+cd path/to/prject
 cat .env.dist >> .env
 ```
 Set PROJECT_ROOT env var according to your project path. It should forward to 'server' Golang application. Ex.:
@@ -15,6 +16,12 @@ Set PROJECT_ROOT env var according to your project path. It should forward to 's
 Install [MySQL](https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/) on your local machine. 
 To make your work with project easier you can use [PHPMyAdmin](https://www.phpmyadmin.net/) MySQL client. 
 
+##### Run migrations 
+
+```
+cd PROJECT_ROOT
+go run cli/db/migrate/up/up.go
+```
 
 ##### Run tests
 
@@ -28,13 +35,6 @@ go test ./... -p 1 -count=1 -v
 ```
 cd PROJECT_ROOT
 go run main.go
-```
-
-##### Run migrations 
-
-```
-cd PROJECT_ROOT
-go run cli/db/migrate/up/up.go
 ```
 
 ##### Postman
