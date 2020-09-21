@@ -7,7 +7,8 @@ const (
 	// struct names
 
 	ClassStructName                = "Class"
-	APIClassesStructName           = "Classes"
+	APIClassesStructName           = "APIClasses"
+	APIBookingsStructName          = "APIBookings"
 	VisitorStructName              = "Visitor"
 	TimetableItemStructName        = "TimetableItem"
 	VisitorTimetableItemStructName = "VisitorTimetableItem"
@@ -47,7 +48,6 @@ const (
 	VisitorDoesNotExistErrorMsg          = "%s resource: visitor does not exists"
 	TimetableItemDoesNotExistErrorMsg    = "%s resource: visitor does not exists"
 	StartDateAfterEndDateErrorMsg        = "start_date can not be after end_date"
-	StartDateBeforeNowErrorMsg           = "start_date can not be before now"
 	TimetableItemDateExistsBatchErrorMsg = "date %s is already registered"
 
 	// date

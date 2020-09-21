@@ -69,9 +69,6 @@ func (m Class) ValidateAPIClasses(ctx context.Context, conn *sql.Conn, apiClasse
 	if apiClasses.StartDate.After(*apiClasses.EndDate) {
 		return errors.New(constants.StartDateAfterEndDateErrorMsg)
 	}
-	if apiClasses.StartDate.Before(time.Now()) {
-		return errors.New(constants.StartDateBeforeNowErrorMsg)
-	}
 	t := TimetableItem{}
 	date := apiClasses.StartDate
 	for !date.After(*apiClasses.EndDate) {

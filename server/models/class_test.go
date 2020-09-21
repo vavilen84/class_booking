@@ -160,27 +160,17 @@ func TestValidateAPIClasses(t *testing.T) {
 	PrepareTestDB(ctx, conn)
 
 	c := 10
-	notValidTime := time.Now().AddDate(-3, 0, 0)
-	a := containers.APIClasses{
-		Name:      "name",
-		Capacity:  &c,
-		StartDate: &notValidTime,
-		EndDate:   &notValidTime,
-	}
 	class := Class{}
-	err := class.ValidateAPIClasses(ctx, conn, a)
-	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), constants.StartDateBeforeNowErrorMsg)
 
 	now := time.Now().AddDate(0, 0, 1)
 	future := time.Now().AddDate(3, 0, 0)
-	a = containers.APIClasses{
+	a := containers.APIClasses{
 		Name:      "name",
 		Capacity:  &c,
 		StartDate: &future,
 		EndDate:   &now,
 	}
-	err = class.ValidateAPIClasses(ctx, conn, a)
+	err := class.ValidateAPIClasses(ctx, conn, a)
 	assert.NotNil(t, err)
 	assert.Contains(t, err.Error(), constants.StartDateAfterEndDateErrorMsg)
 
