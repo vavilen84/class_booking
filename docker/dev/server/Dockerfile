@@ -1,6 +1,6 @@
 FROM golang:1.15
-
-WORKDIR /usr/server/
+ARG WORKDIR
+WORKDIR $WORKDIR
 ENV GO111MODULE=on
 ENV GOPATH=''
 COPY ./server/ ./

@@ -27,7 +27,7 @@ func InitHttpServer(handler http.Handler) *http.Server {
 
 	return &http.Server{
 		Handler:      handler,
-		Addr:         "127.0.0.1:" + port,
+		Addr:         "0.0.0.0:" + port,
 		WriteTimeout: constants.DefaultWriteTimout,
 		ReadTimeout:  constants.DefaultReadTimeout,
 	}

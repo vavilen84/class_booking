@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+
+  server:
+    build:
+      context: ../../
+      dockerfile: docker/dev/server/Dockerfile
+    networks:
+      - local
+    container_name: server
+    env_file:
+      - ../../.env
+    expose:
+      - "8080"
+    environment:
+      - DOCKER_MYSQL_HOST_MACHINE=false
+      - DOCKER=true
+    ports:
+      - 8080:8080
+
+  pma:
+    container_name: pma
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - '8081:8081'
+    environment:
+      - PMA_ARBITRARY=1
+    networks:
+      - local
+
+networks:
+  local:

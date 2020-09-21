@@ -8,7 +8,7 @@ cd path/to/prject
 cat .env.dist >> .env
 ```
 Set PROJECT_ROOT env var according to your project path. It should forward to 'server' Golang application. Ex.:
-- Root path is /var/www/class_booking
+- path/to/prject is /var/www/class_booking
 - PROJECT_ROOT=/var/www/class_booking/server
 
 ##### MySQL
