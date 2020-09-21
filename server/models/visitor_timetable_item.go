@@ -119,11 +119,5 @@ func (m VisitorTimetableItem) ValidateAPIBookings(ctx context.Context, conn *sql
 	if err == sql.ErrNoRows {
 		return errors.New(fmt.Sprintf(constants.TimetableItemDoesNotExistErrorMsg, apiBookings.Date.Format(constants.DateFormat)))
 	}
-
-	v := Visitor{}
-	err = v.FindByEmail(ctx, conn, apiBookings.Email)
-	if err == sql.ErrNoRows {
-		return errors.New(fmt.Sprintf(constants.VisitorDoesNotExistErrorMsg, constants.APIBookingsStructName))
-	}
 	return nil
 }

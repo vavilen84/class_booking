@@ -175,13 +175,6 @@ func TestVisitorTimetableItemValidateAPIBookings(t *testing.T) {
 	err := vti.ValidateAPIBookings(ctx, conn, ab)
 	assert.NotNil(t, err)
 
-	ab = APIBookings{
-		Email: "not_existing_email",
-		Date:  TestTimetableItem.Date,
-	}
-	err = vti.ValidateAPIBookings(ctx, conn, ab)
-	assert.NotNil(t, err)
-
 	notRegisteredDate := time.Now().AddDate(3, 0, 0)
 	ab = APIBookings{
 		Email: TestVisitor.Email,

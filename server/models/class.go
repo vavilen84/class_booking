@@ -72,8 +72,12 @@ func (m Class) ValidateAPIClasses(ctx context.Context, conn *sql.Conn, apiClasse
 	date := apiClasses.StartDate
 	for !date.After(*apiClasses.EndDate) {
 		err = t.FindByDate(ctx, conn, date)
-		if err != sql.ErrNoRows {
+		if err == nil {
 			return errors.New(fmt.Sprintf(constants.TimetableItemDateExistsBatchErrorMsg, date.Format(constants.DateFormat)))
+		}
+		if err != sql.ErrNoRows {
+			helpers.LogError(err)
+			return
 		}
 		plusDayDate := date.AddDate(0, 0, 1)
 		date = &plusDayDate
