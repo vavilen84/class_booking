@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/vavilen84/class_booking/constants"
+	"github.com/vavilen84/class_booking/containers"
 	"github.com/vavilen84/class_booking/database"
 )
 
@@ -94,6 +95,25 @@ func (m *VisitorTimetableItem) ValidateTimetableItemExists(ctx context.Context, 
 			return errors.New(fmt.Sprintf(constants.TimetableItemDoesNotExistErrorMsg, constants.VisitorTimetableItemStructName))
 		}
 		return err
+	}
+	return nil
+}
+
+func (m VisitorTimetableItem) ValidateAPIBookings(ctx context.Context, conn *sql.Conn, apiBookings containers.APIBookings) (err error) {
+	err = Validate(apiBookings)
+	if err != nil {
+		return
+	}
+	ti := TimetableItem{}
+	err = ti.FindByDate(ctx, conn, apiBookings.Date)
+	if err == sql.ErrNoRows {
+		return errors.New(fmt.Sprintf(constants.TimetableItemDoesNotExistErrorMsg, apiBookings.Date.Format(constants.DateFormat)))
+	}
+
+	v := Visitor{}
+	err = v.FindByEmail(ctx, conn, apiBookings.Email)
+	if err == sql.ErrNoRows {
+		return errors.New(fmt.Sprintf(constants.VisitorDoesNotExistErrorMsg, constants.APIBookingsStructName))
 	}
 	return nil
 }

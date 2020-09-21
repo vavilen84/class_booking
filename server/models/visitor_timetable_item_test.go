@@ -6,8 +6,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/class_booking/constants"
+	"github.com/vavilen84/class_booking/containers"
 	"github.com/vavilen84/class_booking/store"
 	"testing"
+	"time"
 )
 
 func TestVisitorTimetableItemValidateRequiredTag(t *testing.T) {
@@ -158,4 +160,38 @@ func TestVisitorTimetableItemDelete(t *testing.T) {
 
 	err = v.FindById(ctx, conn, TestVisitorTimetableItem.Id)
 	assert.Equal(t, sql.ErrNoRows, err)
+}
+
+func TestVisitorTimetableItemValidateAPIBookings(t *testing.T) {
+	ctx := store.GetDefaultDBContext()
+	conn := store.GetNewTestDBConn()
+	defer conn.Close()
+	PrepareTestDB(ctx, conn)
+
+	ab := containers.APIBookings{}
+	vti := VisitorTimetableItem{}
+	err := vti.ValidateAPIBookings(ctx, conn, ab)
+	assert.NotNil(t, err)
+
+	ab = containers.APIBookings{
+		Email: "not_existing_email",
+		Date:  TestTimetableItem.Date,
+	}
+	err = vti.ValidateAPIBookings(ctx, conn, ab)
+	assert.NotNil(t, err)
+
+	notRegisteredDate := time.Now().AddDate(3, 0, 0)
+	ab = containers.APIBookings{
+		Email: TestVisitor.Email,
+		Date:  &notRegisteredDate,
+	}
+	err = vti.ValidateAPIBookings(ctx, conn, ab)
+	assert.NotNil(t, err)
+
+	ab = containers.APIBookings{
+		Email: TestVisitor.Email,
+		Date:  TestTimetableItem.Date,
+	}
+	err = vti.ValidateAPIBookings(ctx, conn, ab)
+	assert.Nil(t, err)
 }

@@ -12,6 +12,7 @@ func MakeHandler() http.Handler {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/classes", Classes).Methods(http.MethodPost)
+	r.HandleFunc("/bookings", Bookings).Methods(http.MethodPost)
 
 	return r
 }

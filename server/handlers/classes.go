@@ -27,6 +27,7 @@ func Classes(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		helpers.LogError(err)
 		http.Error(w, "Unprocessable Entity", http.StatusUnprocessableEntity)
+		return
 	}
 
 	err = class.BatchInsert(ctx, conn, apiClasses)
