@@ -1,16 +1,15 @@
-package containers
+package models
 
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/class_booking/constants"
 	"github.com/vavilen84/class_booking/helpers"
-	"github.com/vavilen84/class_booking/models"
 	"testing"
 )
 
 func TestAPIClassesValidateRequiredTag(t *testing.T) {
-	err := models.Validate(APIClasses{})
+	err := Validate(APIClasses{})
 	assert.NotNil(t, err)
 	assert.Contains(t, err.Error(), fmt.Sprintf(constants.RequiredErrorMsg, constants.APIClassesStructName, "StartDate"))
 	assert.Contains(t, err.Error(), fmt.Sprintf(constants.RequiredErrorMsg, constants.APIClassesStructName, "Name"))
@@ -24,7 +23,7 @@ func TestAPIClassesValidateMinValueTag(t *testing.T) {
 		Name:     "n",
 		Capacity: &notValidCapacity,
 	}
-	err := models.Validate(c)
+	err := Validate(c)
 	assert.NotNil(t, err)
 	assert.Contains(t, err.Error(), fmt.Sprintf(constants.MinValueErrorMsg, constants.APIClassesStructName, "Name", "2"))
 	assert.Contains(t, err.Error(), fmt.Sprintf(constants.MinValueErrorMsg, constants.APIClassesStructName, "Capacity", "1"))
@@ -36,7 +35,7 @@ func TestAPIClassesValidateMaxValueTag(t *testing.T) {
 		Name:     helpers.GenerateRandomString(256),
 		Capacity: &notValidCapacity,
 	}
-	err := models.Validate(c)
+	err := Validate(c)
 	assert.NotNil(t, err)
 	assert.Contains(t, err.Error(), fmt.Sprintf(constants.MaxValueErrorMsg, constants.APIClassesStructName, "Name", "255"))
 	assert.Contains(t, err.Error(), fmt.Sprintf(constants.MaxValueErrorMsg, constants.APIClassesStructName, "Capacity", "50"))

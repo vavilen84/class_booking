@@ -6,7 +6,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/class_booking/constants"
-	"github.com/vavilen84/class_booking/containers"
 	"github.com/vavilen84/class_booking/helpers"
 	"github.com/vavilen84/class_booking/store"
 	"testing"
@@ -158,7 +157,7 @@ func TestValidateAPIClasses(t *testing.T) {
 
 	now := time.Now().AddDate(0, 0, 1)
 	future := time.Now().AddDate(3, 0, 0)
-	a := containers.APIClasses{
+	a := APIClasses{
 		Name:      "name",
 		Capacity:  &c,
 		StartDate: &future,
@@ -180,7 +179,7 @@ func TestValidateAPIClasses(t *testing.T) {
 
 	startDate := date
 	endDate := date.AddDate(0, 0, 1)
-	a = containers.APIClasses{
+	a = APIClasses{
 		Name:      "name",
 		Capacity:  &c,
 		StartDate: &startDate,
@@ -206,7 +205,7 @@ func TestClassBatchInsert(t *testing.T) {
 	endDate := time.Now().AddDate(0, 0, 21)
 	c := 10
 	name := "name"
-	a := containers.APIClasses{
+	a := APIClasses{
 		Name:      name,
 		Capacity:  &c,
 		StartDate: &startDate,

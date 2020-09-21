@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/vavilen84/class_booking/constants"
-	"github.com/vavilen84/class_booking/containers"
 	"github.com/vavilen84/class_booking/database"
 )
 
@@ -110,7 +109,7 @@ func (m *VisitorTimetableItem) ValidateTimetableItemExists(ctx context.Context, 
 	return nil
 }
 
-func (m VisitorTimetableItem) ValidateAPIBookings(ctx context.Context, conn *sql.Conn, apiBookings containers.APIBookings) (err error) {
+func (m VisitorTimetableItem) ValidateAPIBookings(ctx context.Context, conn *sql.Conn, apiBookings APIBookings) (err error) {
 	err = Validate(apiBookings)
 	if err != nil {
 		return

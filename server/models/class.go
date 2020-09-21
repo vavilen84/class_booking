@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/vavilen84/class_booking/constants"
-	"github.com/vavilen84/class_booking/containers"
 	"github.com/vavilen84/class_booking/database"
 	"github.com/vavilen84/class_booking/helpers"
 	"time"
@@ -61,7 +60,7 @@ func (m *Class) FindByName(ctx context.Context, conn *sql.Conn, name string) (er
 	return err
 }
 
-func (m Class) ValidateAPIClasses(ctx context.Context, conn *sql.Conn, apiClasses containers.APIClasses) (err error) {
+func (m Class) ValidateAPIClasses(ctx context.Context, conn *sql.Conn, apiClasses APIClasses) (err error) {
 	err = Validate(apiClasses)
 	if err != nil {
 		return
@@ -82,7 +81,7 @@ func (m Class) ValidateAPIClasses(ctx context.Context, conn *sql.Conn, apiClasse
 	return nil
 }
 
-func (m Class) BatchInsert(ctx context.Context, conn *sql.Conn, apiClasses containers.APIClasses) (err error) {
+func (m Class) BatchInsert(ctx context.Context, conn *sql.Conn, apiClasses APIClasses) (err error) {
 	err = m.ValidateAPIClasses(ctx, conn, apiClasses)
 	if err != nil {
 		helpers.LogError(err)

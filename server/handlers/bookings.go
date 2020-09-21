@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"github.com/google/uuid"
-	"github.com/vavilen84/class_booking/containers"
 	"github.com/vavilen84/class_booking/helpers"
 	"github.com/vavilen84/class_booking/models"
 	"github.com/vavilen84/class_booking/store"
@@ -16,7 +15,7 @@ func Bookings(w http.ResponseWriter, r *http.Request) {
 	defer conn.Close()
 
 	dec := json.NewDecoder(r.Body)
-	apiBookings := containers.APIBookings{}
+	apiBookings := models.APIBookings{}
 	err := dec.Decode(&apiBookings)
 	if err != nil {
 		helpers.LogError(err)

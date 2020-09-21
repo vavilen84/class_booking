@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/class_booking/constants"
-	"github.com/vavilen84/class_booking/containers"
 	"github.com/vavilen84/class_booking/handlers"
 	"github.com/vavilen84/class_booking/helpers"
 	"github.com/vavilen84/class_booking/models"
@@ -88,7 +87,7 @@ func TestClasses(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 	assert.Contains(t, body, "Bad Request")
 
-	a := containers.APIClasses{}
+	a := models.APIClasses{}
 	reqBody, err := json.Marshal(a)
 	assert.Nil(t, err)
 	resp, body = createHTTPRequest(handler, "/classes", strings.NewReader(string(reqBody)))
@@ -102,7 +101,7 @@ func TestClasses(t *testing.T) {
 	endDate := time.Now().AddDate(0, 0, 3)
 	capacity := 10
 	name := "New Class"
-	a = containers.APIClasses{
+	a = models.APIClasses{
 		Name:      name,
 		StartDate: &startDate,
 		EndDate:   &endDate,
@@ -144,7 +143,7 @@ func TestBookings(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 	assert.Contains(t, body, "Bad Request")
 
-	a := containers.APIBookings{}
+	a := models.APIBookings{}
 	reqBody, err := json.Marshal(a)
 	assert.Nil(t, err)
 	resp, body = createHTTPRequest(handler, "/bookings", strings.NewReader(string(reqBody)))
@@ -152,7 +151,7 @@ func TestBookings(t *testing.T) {
 	assert.Contains(t, body, fmt.Sprintf(constants.RequiredErrorMsg, constants.APIBookingsStructName, "Date"))
 	assert.Contains(t, body, fmt.Sprintf(constants.RequiredErrorMsg, constants.APIBookingsStructName, "Email"))
 
-	a = containers.APIBookings{
+	a = models.APIBookings{
 		Email: models.TestVisitor.Email,
 		Date:  models.TestTimetableItem.Date,
 	}

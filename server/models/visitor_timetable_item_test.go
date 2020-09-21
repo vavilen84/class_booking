@@ -6,7 +6,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/class_booking/constants"
-	"github.com/vavilen84/class_booking/containers"
 	"github.com/vavilen84/class_booking/store"
 	"testing"
 	"time"
@@ -171,12 +170,12 @@ func TestVisitorTimetableItemValidateAPIBookings(t *testing.T) {
 	defer conn.Close()
 	prepareTestDB(ctx, conn)
 
-	ab := containers.APIBookings{}
+	ab := APIBookings{}
 	vti := VisitorTimetableItem{}
 	err := vti.ValidateAPIBookings(ctx, conn, ab)
 	assert.NotNil(t, err)
 
-	ab = containers.APIBookings{
+	ab = APIBookings{
 		Email: "not_existing_email",
 		Date:  TestTimetableItem.Date,
 	}
@@ -184,14 +183,14 @@ func TestVisitorTimetableItemValidateAPIBookings(t *testing.T) {
 	assert.NotNil(t, err)
 
 	notRegisteredDate := time.Now().AddDate(3, 0, 0)
-	ab = containers.APIBookings{
+	ab = APIBookings{
 		Email: TestVisitor.Email,
 		Date:  &notRegisteredDate,
 	}
 	err = vti.ValidateAPIBookings(ctx, conn, ab)
 	assert.NotNil(t, err)
 
-	ab = containers.APIBookings{
+	ab = APIBookings{
 		Email: TestVisitor.Email,
 		Date:  TestTimetableItem.Date,
 	}

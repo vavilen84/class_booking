@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/vavilen84/class_booking/containers"
 	"github.com/vavilen84/class_booking/helpers"
 	"github.com/vavilen84/class_booking/models"
 	"github.com/vavilen84/class_booking/store"
@@ -14,7 +13,7 @@ func Classes(w http.ResponseWriter, r *http.Request) {
 	defer conn.Close()
 
 	dec := json.NewDecoder(r.Body)
-	apiClasses := containers.APIClasses{}
+	apiClasses := models.APIClasses{}
 	err := dec.Decode(&apiClasses)
 	if err != nil {
 		helpers.LogError(err)
