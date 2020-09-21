@@ -1,19 +1,22 @@
 # Class booking project
 
-[Server application design](docs/server-design.md)
+There are 3 possible ways to run project locally:
+- [Run project without Docker](docs/local_run.md)
+- [Run project with Docker (MySQL server is on host machine)](docs/docker_mysql_on_host_machine.md)
+- [Run project with Docker (MySQL server is a docker container](docs/docker.md)
 
-## Run project
+[Database design](docs/db-design.md)
 
-### Install Docker
 
-In order to use this workflow for development, you must first [install Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/).
 
-### Environment
 
-Create .env file (just copy env.dist content will be enough in order to run project)
-```
-cat .env.dist >> .env
-```
+
+
+
+
+
+
+
 
 ### Console commands
 
