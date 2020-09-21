@@ -58,6 +58,17 @@ func (m *VisitorTimetableItem) FindById(ctx context.Context, conn *sql.Conn, id 
 	return err
 }
 
+func (m *VisitorTimetableItem) FindByVisitorEmail(ctx context.Context, conn *sql.Conn, email string) (err error) {
+	v := Visitor{}
+	err = v.FindByEmail(ctx, conn, email)
+	if err != nil {
+		return
+	}
+	row := conn.QueryRowContext(ctx, `SELECT * FROM `+m.GetTableName()+` WHERE visitor_id = ?`, v.Id)
+	err = row.Scan(&m.Id, &m.VisitorId, &m.TimetableItemId)
+	return err
+}
+
 func (m *VisitorTimetableItem) BookingByVisitorAndTimetableItemExists(ctx context.Context, conn *sql.Conn) (err error, exists bool) {
 	row := conn.QueryRowContext(
 		ctx,

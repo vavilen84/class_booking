@@ -86,6 +86,17 @@ func TestVisitorTimetableItemFindById(t *testing.T) {
 	assert.Equal(t, TestVisitorTimetableItem.TimetableItemId, m.TimetableItemId)
 }
 
+func TestVisitorTimetableItemFindByVisitorEmail(t *testing.T) {
+	conn, ctx := store.GetNewTestDBConn()
+	defer conn.Close()
+	prepareTestDB(ctx, conn)
+
+	m := VisitorTimetableItem{}
+	err := m.FindByVisitorEmail(ctx, conn, TestVisitor2.Email)
+	assert.Nil(t, err)
+	assert.Equal(t, TestVisitorTimetableItem.VisitorId, TestVisitor2.Id)
+}
+
 func TestVisitorTimetableItemInsert(t *testing.T) {
 	conn, ctx := store.GetNewTestDBConn()
 	defer conn.Close()

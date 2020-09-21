@@ -132,3 +132,42 @@ func TestClasses(t *testing.T) {
 	assert.NotEmpty(t, ti.Id)
 	assert.Equal(t, c.Id, ti.ClassId)
 }
+
+func TestBookings(t *testing.T) {
+	setTestAppEnv()
+	store.InitTestDB()
+	conn, ctx := store.GetNewTestDBConn()
+	prepareTestDB(ctx, conn)
+	handler := handlers.MakeHandler()
+
+	resp, body := createHTTPRequest(handler, "/bookings", strings.NewReader(``))
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+	assert.Contains(t, body, "Bad Request")
+
+	a := containers.APIBookings{}
+	reqBody, err := json.Marshal(a)
+	assert.Nil(t, err)
+	resp, body = createHTTPRequest(handler, "/bookings", strings.NewReader(string(reqBody)))
+	assert.Equal(t, http.StatusUnprocessableEntity, resp.StatusCode)
+	assert.Contains(t, body, fmt.Sprintf(constants.RequiredErrorMsg, constants.APIBookingsStructName, "Date"))
+	assert.Contains(t, body, fmt.Sprintf(constants.RequiredErrorMsg, constants.APIBookingsStructName, "Email"))
+
+	a = containers.APIBookings{
+		Email: models.TestVisitor.Email,
+		Date:  models.TestTimetableItem.Date,
+	}
+	reqBody, err = json.Marshal(a)
+	assert.Nil(t, err)
+	resp, body = createHTTPRequest(handler, "/bookings", strings.NewReader(string(reqBody)))
+	assert.Equal(t, http.StatusCreated, resp.StatusCode)
+
+	vti := models.VisitorTimetableItem{}
+	err = vti.FindByVisitorEmail(ctx, conn, a.Email)
+	assert.Nil(t, err)
+	assert.Equal(t, vti.VisitorId, models.TestVisitor.Id)
+
+	ti := models.TimetableItem{}
+	err = ti.FindByDate(ctx, conn, a.Date)
+	assert.Nil(t, err)
+	assert.Equal(t, vti.TimetableItemId, models.TestTimetableItem.Id)
+}

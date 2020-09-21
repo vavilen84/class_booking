@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"github.com/google/uuid"
 	"github.com/vavilen84/class_booking/containers"
 	"github.com/vavilen84/class_booking/helpers"
 	"github.com/vavilen84/class_booking/models"
@@ -27,7 +28,8 @@ func Bookings(w http.ResponseWriter, r *http.Request) {
 	err = vti.ValidateAPIBookings(ctx, conn, apiBookings)
 	if err != nil {
 		helpers.LogError(err)
-		http.Error(w, "Unprocessable Entity", http.StatusUnprocessableEntity)
+		w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
+		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 
@@ -60,6 +62,7 @@ func Bookings(w http.ResponseWriter, r *http.Request) {
 	}
 
 	vti = models.VisitorTimetableItem{
+		Id:              uuid.New().String(),
 		VisitorId:       v.Id,
 		TimetableItemId: ti.Id,
 	}
