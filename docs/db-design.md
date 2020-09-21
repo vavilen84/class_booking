@@ -24,11 +24,3 @@
 - visitor_id varchar(255) not null
 - timetable_item_id varchar(255) not null
 PK (visitor_id, timetable_item_id)
-
-
-## Booking flow
-
-- Register class
-- Create class timetable
-- Register user
-- User is able to book a class for a given date
