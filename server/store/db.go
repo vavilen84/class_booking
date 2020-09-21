@@ -31,7 +31,7 @@ func GetNewDBConn() (conn *sql.Conn, ctx context.Context) {
 }
 
 func createDbIfNotExists(ctx context.Context, conn *sql.Conn, dbName string) (err error) {
-	_, err = conn.ExecContext(ctx, "CREATE DATABASE IF NOT EXISTS ?", dbName)
+	_, err = conn.ExecContext(ctx, "CREATE DATABASE IF NOT EXISTS "+dbName)
 	if err != nil {
 		log.Print(err.Error())
 		return err
