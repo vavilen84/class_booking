@@ -24,7 +24,7 @@ find . -type f -iname "*.sh" -exec chmod +x {} \;
 
 ```
 cd path/to/project
-shell/docker_sql/docker_up.sh
+shell/docker_sql/docker_up_build.sh
 ```
 
 ##### Run migrations

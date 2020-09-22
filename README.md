@@ -6,3 +6,5 @@ There are 3 possible ways to run project locally:
 - [Run project with Docker (MySQL server is a docker container](docs/docker.md)
 
 [Database design](docs/db-design.md)
+
+If you try to use both docker variants on your local machine - you can have troubles with caching.
