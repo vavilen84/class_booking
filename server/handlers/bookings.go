@@ -72,6 +72,12 @@ func Bookings(w http.ResponseWriter, r *http.Request) {
 		VisitorId:       v.Id,
 		TimetableItemId: ti.Id,
 	}
+	err = vti.ValidateVisitorTimetableItemBeforeInsert(ctx, conn)
+	if err != nil {
+		helpers.LogError(err)
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
 	err = vti.Insert(ctx, conn)
 	if err != nil {
 		helpers.LogError(err)

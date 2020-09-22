@@ -24,6 +24,15 @@ func (m VisitorTimetableItem) GetId() string {
 }
 
 func (m VisitorTimetableItem) Insert(ctx context.Context, conn *sql.Conn) (err error) {
+	err = m.ValidateVisitorTimetableItemBeforeInsert(ctx, conn)
+	if err != nil {
+		return
+	}
+	err = database.Insert(ctx, conn, m)
+	return
+}
+
+func (m VisitorTimetableItem) ValidateVisitorTimetableItemBeforeInsert(ctx context.Context, conn *sql.Conn) (err error) {
 	err = Validate(m)
 	if err != nil {
 		return
@@ -43,8 +52,7 @@ func (m VisitorTimetableItem) Insert(ctx context.Context, conn *sql.Conn) (err e
 	if alreadyExists {
 		return errors.New(fmt.Sprintf(constants.BookingAlreadyExistsErrorMsg, constants.VisitorTimetableItemStructName))
 	}
-	err = database.Insert(ctx, conn, m)
-	return
+	return nil
 }
 
 func (m VisitorTimetableItem) Delete(ctx context.Context, conn *sql.Conn) error {

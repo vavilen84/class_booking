@@ -25,6 +25,15 @@ func (m TimetableItem) GetId() string {
 }
 
 func (m TimetableItem) Insert(ctx context.Context, conn *sql.Conn) (err error) {
+	err = m.ValidateTimetableItemBeforeInsert(ctx, conn)
+	if err != nil {
+		return
+	}
+	err = database.Insert(ctx, conn, m)
+	return
+}
+
+func (m TimetableItem) ValidateTimetableItemBeforeInsert(ctx context.Context, conn *sql.Conn) (err error) {
 	err = Validate(m)
 	if err != nil {
 		return
@@ -37,8 +46,7 @@ func (m TimetableItem) Insert(ctx context.Context, conn *sql.Conn) (err error) {
 	if err != nil {
 		return
 	}
-	err = database.Insert(ctx, conn, m)
-	return
+	return nil
 }
 
 func (m TimetableItem) Delete(ctx context.Context, conn *sql.Conn) error {
