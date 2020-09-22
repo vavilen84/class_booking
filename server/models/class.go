@@ -91,6 +91,11 @@ func (m Class) BatchInsert(ctx context.Context, conn *sql.Conn, apiClasses APICl
 		helpers.LogError(err)
 		return
 	}
+	tx, beginTxErr := conn.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
+	if beginTxErr != nil {
+		helpers.LogError(beginTxErr)
+		return beginTxErr
+	}
 	class := Class{}
 	err = class.FindByName(ctx, conn, apiClasses.Name)
 	if err == sql.ErrNoRows {
@@ -99,10 +104,17 @@ func (m Class) BatchInsert(ctx context.Context, conn *sql.Conn, apiClasses APICl
 			Name:     apiClasses.Name,
 			Capacity: apiClasses.Capacity,
 		}
-		err = class.Insert(ctx, conn)
+		err = Validate(class)
 		if err != nil {
+			_ = tx.Rollback()
 			helpers.LogError(err)
 			return
+		}
+		execErr := database.TxInsert(ctx, tx, class)
+		if execErr != nil {
+			_ = tx.Rollback()
+			helpers.LogError(execErr)
+			return execErr
 		}
 	}
 	date := apiClasses.StartDate
@@ -110,20 +122,34 @@ func (m Class) BatchInsert(ctx context.Context, conn *sql.Conn, apiClasses APICl
 	for !date.After(*apiClasses.EndDate) {
 		err = t.FindByDate(ctx, conn, date)
 		if err != sql.ErrNoRows {
-			return errors.New(fmt.Sprintf(constants.TimetableItemDateExistsBatchErrorMsg, date.Format(constants.DateFormat)))
+			_ = tx.Rollback()
+			err = errors.New(fmt.Sprintf(constants.TimetableItemDateExistsBatchErrorMsg, date.Format(constants.DateFormat)))
+			helpers.LogError(err)
+			return
 		}
 		t = TimetableItem{
 			Id:      uuid.New().String(),
 			Date:    date,
 			ClassId: class.Id,
 		}
-		err = t.Insert(ctx, conn)
+		err = t.ValidateTimetableItemBeforeInsert(ctx, conn)
 		if err != nil {
+			_ = tx.Rollback()
 			helpers.LogError(err)
 			return
 		}
+		execErr := database.TxInsert(ctx, tx, t)
+		if execErr != nil {
+			_ = tx.Rollback()
+			helpers.LogError(execErr)
+			return execErr
+		}
 		plusDay := date.Add(24 * time.Hour)
 		date = &plusDay
+	}
+	if err := tx.Commit(); err != nil {
+		helpers.LogError(err)
+		return err
 	}
 	return
 }
