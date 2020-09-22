@@ -27,9 +27,14 @@ func GetNewTestDBConn() (conn *sql.Conn, ctx context.Context) {
 }
 
 func initTestDBForLocalhostAppRun() *sql.DB {
+	// TODO dirty hack, needs refactoring - main_test.go and models/* tests have different relative path to  .env
 	err := godotenv.Load("../../.env")
 	if err != nil {
-		helpers.LogError(err)
+		err := godotenv.Load("../.env")
+		if err != nil {
+			helpers.LogError(err)
+			os.Exit(1)
+		}
 	}
 	sqlServerDsn := os.Getenv("LOCALHOST_SQL_DSN")
 	mysqlDbName := os.Getenv("MYSQL_TEST_DATABASE")
