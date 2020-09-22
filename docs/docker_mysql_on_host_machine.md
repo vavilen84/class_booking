@@ -20,6 +20,10 @@ cd path/to/project
 find . -type f -iname "*.sh" -exec chmod +x {} \;
 ```
 
+##### MySQL
+
+Install [MySQL](https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/) on your local machine. 
+
 ##### Run project
 
 ```
